@@ -1,5 +1,8 @@
 const User = require("../models/User")
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const {JWT_PRIVATE_KEY} = require("../config/constant")
+
 const registerUser = async (req,res) => {
     const saltRounds = 10; 
     try{
@@ -7,7 +10,11 @@ const registerUser = async (req,res) => {
     if(!firstName || !lastName || !email || !password){
         return res.status(400).json({message : "Require all fields data"});
     }
-    // unique user
+
+    if (password.length < 8) {
+        return res.status(400).json({ message: "Password too short" });
+    }
+    
     const existingUser = await User.findOne({email});
     console.log(existingUser);
     if(existingUser) return res.status(400).json({message: "User already exists"});
@@ -23,8 +30,6 @@ const registerUser = async (req,res) => {
     }
 
     const hashPassword = await bcrypt.hash(password,saltRounds);
-    
-    // jwt token
 
         const user = await User.create({
         firstName,
@@ -32,6 +37,13 @@ const registerUser = async (req,res) => {
         email,
         password:hashPassword,
         userName
+    });
+
+    const token = jwt.sign({userId:user._id},JWT_PRIVATE_KEY);
+
+    res.cookie("token",token,{
+        sameSite:"strict",
+        httpOnly:true,
     });
 
     res.status(200).json({
@@ -43,6 +55,8 @@ const registerUser = async (req,res) => {
     }
 
 }
+
+
 
 module.exports = {
     registerUser,

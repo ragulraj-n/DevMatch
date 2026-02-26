@@ -3,9 +3,9 @@ const connectDB = require("./config/database");
 const authRouter = require("./routes/authRouter")
 
 const app = express();
-
 app.use(express.json());
-app.use("/signup",authRouter);
+
+app.use("/",authRouter);
 
 
 connectDB().then(()=>{

@@ -20,6 +20,22 @@ const authUser = async (req,res,next) =>{
     }
 }
 
+const optionalAuthUser = async(req,res,next) =>{
+    try{
+    const { token } = req.cookies;
+    if(!token) return next();
+
+    const {userId} = jwt.verify(token,JWT_PRIVATE_KEY);
+    const user = await User.findById(userId);
+    if(!user) return next();
+    req.user = user;
+    next();
+    }catch(err){
+        next();
+    }
+}
+
 module.exports = {
     authUser,
+    optionalAuthUser,
 }

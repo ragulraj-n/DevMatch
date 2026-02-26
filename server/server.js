@@ -1,7 +1,11 @@
 const express = require("express");
 const connectDB = require("./config/database");
-const app =express();
+const authRouter = require("./routes/authRouter")
 
+const app = express();
+
+app.use(express.json());
+app.use("/signup",authRouter);
 
 
 connectDB().then(()=>{

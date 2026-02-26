@@ -32,7 +32,6 @@ const userSchema = mongoose.Schema({
         type:String,
         unique:true,
         trim:true,
-        lowercase:true,
         required:true,
         index:true,
     },

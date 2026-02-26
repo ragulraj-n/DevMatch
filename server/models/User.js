@@ -72,7 +72,6 @@ const userSchema = mongoose.Schema({
     github: String,
     linkedin: String,
     portfolio: String,
-
     isBlocked:{
         type:Boolean,
         default:false,

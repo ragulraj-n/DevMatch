@@ -1,6 +1,7 @@
 const express = require("express");
+const connectDB = require("./models/database");
 const app =express();
 
-app.listen(5000,()=>{
-    console.log("Server is running on http://localhost:5000");
-})
+connectDB().then(()=>{
+    app.listen(5000,()=> console.log("Server is running on http://localhost:5000"))
+}).catch(err => console.log("Error : "+ err))

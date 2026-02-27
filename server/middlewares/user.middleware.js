@@ -54,13 +54,14 @@ const validateEditProfile = [
     .optional()
     .isString().withMessage("Profile image must be a string")
     .trim()
-    .isURL({
-      require_protocol: true,
-      protocols: ["https"]
-    })
-    .withMessage("Profile image must be a valid HTTPS URL")
-    .matches(/\.(jpg|jpeg|png|webp)(\?.*)?$/i)
-    .withMessage("Profile image must be a valid image URL"),
+    .isURL()
+    .withMessage("Profile image must be a valid HTTPS URL"),
+
+    // image store in cloudnary and send imagelurl
+    //require_protocol: true,
+    //protocols: ["https"]
+    // .matches(/\.(jpg|jpeg|png|webp)(\?.*)?$/i)
+    //  .withMessage("Profile image must be a valid image URL"),
 
   body("location")
     .optional()

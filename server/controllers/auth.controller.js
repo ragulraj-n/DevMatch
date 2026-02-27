@@ -7,13 +7,6 @@ const registerUser = async (req,res) => {
     const saltRounds = 10; 
     try{
     const {firstName, lastName, email, password} = req.body;
-    if(!firstName || !lastName || !email || !password){
-        return res.status(400).json({message : "Require all fields data"});
-    }
-
-    if (password.length < 8) {
-        return res.status(400).json({ message: "Password too short" });
-    }
     
     const existingUser = await User.findOne({email});
     if(existingUser) return res.status(400).json({message: "User already exists"});
@@ -56,7 +49,6 @@ const registerUser = async (req,res) => {
 
 const loginUser = async (req,res) =>{
    try{
-        
         const {email, password} = req.body;
         
         const user = await User.findOne({email}).select("+password");

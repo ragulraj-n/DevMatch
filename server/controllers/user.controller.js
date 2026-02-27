@@ -55,7 +55,7 @@ const editUserProfile = async (req,res) =>{
 
         if(req.body.userName){
             const existingUser  = await User.findOne({userName:req.body.userName});
-            if(existingUser  && existingUser._id.equals(loggedInuser._id)){
+            if(existingUser && !existingUser._id.equals(loggedInuser._id)){
                return res.status(400).json({
                     message:"userName already exists , try another userName",
                 })

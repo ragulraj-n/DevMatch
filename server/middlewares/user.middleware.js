@@ -137,20 +137,6 @@ const validateEditProfile = [
       protocols: ["https"]
     })
     .withMessage("Portfolio must be a valid HTTPS URL"),
-   
-    
-    (req, res, next) => {
-        const errors = validationResult(req);
-
-        if (!errors.isEmpty()) {
-            return res.status(400).json({
-            success: false,
-            errors: errors.array()
-            });
-        }
-
-  next();
-}
 
 ]
 

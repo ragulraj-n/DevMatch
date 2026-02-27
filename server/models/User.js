@@ -46,7 +46,7 @@ const userSchema = mongoose.Schema({
     },
     profileImage:{
         type:String,
-        default:"https://ibb.co/h19fMBKg",
+        default:"https://i.ibb.co/NnCS39LF/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission.jpg",
     },
     location:String,
     experienceLevel:{

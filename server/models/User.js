@@ -44,7 +44,10 @@ const userSchema = mongoose.Schema({
         type:String,
         maxlenght: 300,
     },
-    profileImage:String,
+    profileImage:{
+        type:String,
+        default:"https://ibb.co/h19fMBKg",
+    },
     location:String,
     experienceLevel:{
         type:String,

@@ -43,6 +43,24 @@ const getUserProfile = async (req,res) =>{
     }
 }
 
+const editUserProfile = async (req,res) =>{
+    try{
+        const userNameParams = req.params.userName;
+        if(!req.user || userNameParams != req.user.userName) 
+            return res.status(403).json({
+                message:"Unauthorized access",
+        })
+
+       
+
+}catch(err){
+        res.status(400).json({
+            message:err.message,
+        })
+    }
+}
+
 module.exports = {
     getUserProfile,
+    editUserProfile
 }

@@ -53,13 +53,51 @@ const sendConnection = async (req,res) =>{
                 toUserId,
                 status,
             })
-            res.status(201).json({
-            message:"User request sent successfully",
+           return res.status(201).json({
+            message:`${status} successfully`,
              })
         }
-
-        res.send("Working on");
+        if(existingRequest.status === "rejected" || existingRequest.status==="accepted") 
+            return res.status(400).json({
+        message:`Invalid request , user already ${existingRequest.status}`,
+        });
         
+        if(existingRequest.fromUserId.equals(fromUserId)){
+            existingRequest.status = status;
+            await existingRequest.save();
+            return res.status(200).json({
+                message: `${status} successfully`,
+            })
+        }
+
+        if(existingRequest.status === "ignored"){
+            existingRequest.fromUserId = fromUserId;
+            existingRequest.toUserId = toUserId;
+            existingRequest.status = "requested";
+            await existingRequest.save();
+            return res.status(200).json({
+                message:"User requested accepted",
+            });
+        }
+
+        if(existingRequest.status === "blocked"){
+            return res.status(400).json({
+                message:"User blocked the request",
+            });
+        }
+
+        if(existingRequest.status === "requested"){
+            existingRequest.status = "accepted";
+           await existingRequest.save();
+            return res.status(200).json({
+                message:"User requested accepted",
+            });
+        }
+    
+    return res.status(400).json({
+    message: "Invalid connection action",
+    });
+
     }catch(err){
         res.status(400).json({
             message:err.message,

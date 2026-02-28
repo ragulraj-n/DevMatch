@@ -14,8 +14,10 @@ const ConnectionSchema = mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["requested","ignored","accepted","rejected","blocked"],
-        message: "Invalid connection status",
+        enum:{
+            values:["requested","ignored","accepted","rejected","blocked"],
+            message: "Invalid connection status",
+        },
         default: "requested",
         required:true,
     }
@@ -28,12 +30,11 @@ ConnectionSchema.index(
   { unique: true }
 );
 
-ConnectionSchema.pre("save", function (next) {
+ConnectionSchema.pre("save", function () {
   const connectionRequest = this;
   if(connectionRequest.fromUserId.equals(connectionRequest.toUserId)) {
     throw new Error("Cannot send connection request to yourself!");
   }
-  next();
 });
 
 

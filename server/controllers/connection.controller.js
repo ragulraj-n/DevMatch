@@ -5,12 +5,8 @@ const User = require("../models/User");
 const sendConnection = async (req,res) =>{
     try{
         const fromUserId = req.user._id;
-        const toUserId = req.params.toUserId;
-        const status = req.params.status;
-
-        const toUser = await User.findOne({
-            _id:toUserId,
-        })
+        const { toUserId , status } = req.params;
+        const toUser = await User.findById(toUserId);
 
         if(!toUser) return res.status(400).json({
             message:"Receiver Not Found",
@@ -111,7 +107,7 @@ const sendConnection = async (req,res) =>{
 
 const handleConnection = async (req,res) =>{
     try{
-        const {connectionId, status}=req.params;
+        const {connectionId, status} = req.params;
     if(!connectionId || !status)
         return res.status(400).json({message:"Invalid request"});
     if(!mongoose.Types.ObjectId.isValid(connectionId))
@@ -119,7 +115,7 @@ const handleConnection = async (req,res) =>{
     if(!(status==="accepted" || status==="rejected"))
         return res.status(400).json({message:"Invalid request status"});
 
-    const existingConnection  = await Connection.findOne({_id:connectionId});
+    const existingConnection  = await Connection.findById(connectionId);
     if(!existingConnection)
         return res.status(404).json({message:"Connection not found"})
     if(!existingConnection.toUserId.equals(req.user._id))
@@ -128,18 +124,36 @@ const handleConnection = async (req,res) =>{
     if(!(existingConnection.status==="requested"))
         return res.status(400).json({message:"Invalid request status"});
 
-    existingConnection.status=status;
+    existingConnection.status=status; 
     await existingConnection.save();
     res.status(200).json({message:`User request ${status} successfully`});
     }catch(err){
-        res.status(400).json({
+        res.status(500).json({
             message:err.message,
         })
     }
+}
+
+const getUserRequests = async (req,res) =>{
+    try{
+        const user = req.user;
+        const requestList = await Connection.find({
+            toUserId:user._id,
+            status:"requested"
+        }).populate("fromUserId","firstName lastName profileImage userName");
+
+        res.status(200).json({message:"User pending requests fetched successfully",
+            requestList,
+        });
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
+
 }
 
 
 module.exports = {
     sendConnection,
     handleConnection,
+    getUserRequests,
 }

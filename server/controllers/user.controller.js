@@ -33,7 +33,7 @@ const getUserProfile = async (req,res) =>{
         }
 
         res.status(200).json({
-            message: "User data sent successfully",
+            message: "User data received successfully",
             data: responseData
         });
     }catch(err){

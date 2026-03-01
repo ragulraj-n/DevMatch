@@ -109,7 +109,37 @@ const sendConnection = async (req,res) =>{
     }
 }
 
+const handleConnection = async (req,res) =>{
+    try{
+        const {connectionId, status}=req.params;
+    if(!connectionId || !status)
+        return res.status(400).json({message:"Invalid request"});
+    if(!mongoose.Types.ObjectId.isValid(connectionId))
+        return res.status(400).json({message:"Invalid request id"});
+    if(!(status==="accepted" || status==="rejected"))
+        return res.status(400).json({message:"Invalid request status"});
+
+    const existingConnection  = await Connection.findOne({_id:connectionId});
+    if(!existingConnection)
+        return res.status(404).json({message:"Connection not found"})
+    if(!existingConnection.toUserId.equals(req.user._id))
+        return res.status(401).json({message:"Unauthorized user access"});
+
+    if(!(existingConnection.status==="requested"))
+        return res.status(400).json({message:"Invalid request status"});
+
+    existingConnection.status=status;
+    await existingConnection.save();
+    res.status(200).json({message:`User request ${status} successfully`});
+    }catch(err){
+        res.status(400).json({
+            message:err.message,
+        })
+    }
+}
+
 
 module.exports = {
     sendConnection,
+    handleConnection,
 }

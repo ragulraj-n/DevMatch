@@ -8,25 +8,6 @@ const sendConnection = async (req,res) =>{
         const toUserId = req.params.toUserId;
         const status = req.params.status;
 
-        if(!fromUserId || !toUserId || !status) return res.status(400).json({
-            message:"Invalid Resquest,"
-        })
-        
-        if(!mongoose.Types.ObjectId.isValid(fromUserId) || !mongoose.Types.ObjectId.isValid(toUserId)) return res.status(400).json({
-            message:"Invalid Request , user id must be valid",
-        })
-        
-        if(status!= "blocked" && status!= "requested" && status!= "ignored")
-            return res.status(400).json({
-            message:"Invalid status resquest,"
-        })
-
-        if(fromUserId.equals(toUserId)){
-            return res.status(400).json({
-                message:"User cannot send self request",
-            });
-        }
-
         const toUser = await User.findOne({
             _id:toUserId,
         })
@@ -54,35 +35,41 @@ const sendConnection = async (req,res) =>{
                 status,
             })
            return res.status(201).json({
-            message:`${status} successfully`,
+            message:` user ${status} successfully`,
              })
         }
+
         if(existingRequest.status === "rejected" || existingRequest.status==="accepted") 
             return res.status(400).json({
         message:`Invalid request , user already ${existingRequest.status}`,
         });
         
-        if(existingRequest.fromUserId.equals(fromUserId)){
-            existingRequest.status = status;
-            await existingRequest.save();
+        if(existingRequest.fromUserId.equals(fromUserId) && existingRequest.status === status){
             return res.status(200).json({
-                message: `${status} successfully`,
+                message: `User already ${status}`,
             })
         }
 
+        if(existingRequest.fromUserId.equals(fromUserId)){
+            existingRequest.status = status;
+            await existingRequest.save();
+            return res.status(201).json({
+                message: `${status} successfully`,
+            })
+        }
+        
+        if(existingRequest.status === "ignored" && status==="ignored")
+            return res.status(200).json({
+            message:"user ignored successfully",
+        });
+        
         if(existingRequest.status === "ignored"){
             existingRequest.fromUserId = fromUserId;
             existingRequest.toUserId = toUserId;
-            existingRequest.status = "requested";
+            existingRequest.status = status;
             await existingRequest.save();
             return res.status(200).json({
-                message:"User requested accepted",
-            });
-        }
-
-        if(existingRequest.status === "blocked"){
-            return res.status(400).json({
-                message:"User blocked the request",
+                message:"User requested successfully ,also if already ignored by",
             });
         }
 

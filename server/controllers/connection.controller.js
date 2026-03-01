@@ -151,9 +151,27 @@ const getUserRequests = async (req,res) =>{
 
 }
 
+const getUserSentRequests = async (req,res) =>{
+    try{
+        const user = req.user;
+        const requestList = await Connection.find({
+            fromUserId:user._id,
+            status:"requested"
+        }).populate("toUserId","firstName lastName profileImage userName");
+
+        res.status(200).json({message:"User sent pending requests fetched successfully",
+            requestList,
+        });
+    }catch(err){
+        res.status(500).json({message:err.message});
+    }
+
+}
+
 
 module.exports = {
     sendConnection,
     handleConnection,
     getUserRequests,
+    getUserSentRequests,
 }

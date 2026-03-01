@@ -39,10 +39,22 @@ const sendConnection = async (req,res) =>{
              })
         }
 
-        if(existingRequest.status === "rejected" || existingRequest.status==="accepted") 
+        if(existingRequest.status==="accepted")
             return res.status(400).json({
-        message:`Invalid request , user already ${existingRequest.status}`,
+            message:`Invalid request , user already ${existingRequest.status}`,
         });
+
+        if(existingRequest.status === "rejected"){
+            if(fromUserId.equals(existingRequest.toUserId)){
+                existingRequest.fromUserId = fromUserId;
+                existingRequest.toUserId = toUserId;
+                existingRequest.status = status;
+                await existingRequest.save();
+                return res.status(200).json({
+                    message:`User ${status} successfully ,also if already rejected by user`,
+                });
+            }
+        }
         
         if(existingRequest.fromUserId.equals(fromUserId) && existingRequest.status === status){
             return res.status(200).json({
@@ -58,10 +70,15 @@ const sendConnection = async (req,res) =>{
             })
         }
         
-        if(existingRequest.status === "ignored" && status==="ignored")
+        if(existingRequest.status === status){
+            if(existingRequest.status === "requested"){
+                existingRequest.status = "accepted";
+                await existingRequest.save();
+            }
             return res.status(200).json({
-            message:"user ignored successfully",
+            message:`user ${status} successfully`,
         });
+    }
         
         if(existingRequest.status === "ignored"){
             existingRequest.fromUserId = fromUserId;

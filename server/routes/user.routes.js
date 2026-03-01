@@ -6,6 +6,7 @@ const {validateEditProfile} = require("../middlewares/user.middleware");
 const { validateResult } = require("../utils/validateRequest");
 
 userRouter.get("/myprofile",authUser,getLoggedUserProfile);
-userRouter.get("/:userName",optionalAuthUser,getUserProfile);
 userRouter.patch("/:userName",authUser,validateEditProfile,validateResult,editUserProfile);
+userRouter.get("/:userName",optionalAuthUser,getUserProfile);
+
 module.exports = userRouter;

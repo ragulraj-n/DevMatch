@@ -151,7 +151,7 @@ const getConnections = async (req,res) =>{
         .populate("toUserId","firstName lastName userName profileImage");
 
         const filteredConnections = connections.map((data)=>{
-            if(data.fromUserId._id.equals(user._id)) return toUserId;
+            if(data.fromUserId._id.equals(user._id)) return data.toUserId;
             return data.fromUserId;
         })
 
@@ -201,6 +201,42 @@ const getUserSentRequests = async (req,res) =>{
 
 }
 
+const getUsersConnections = async (req,res) =>{
+    try{
+        const {userId} = req.params;
+        if(!mongoose.Types.ObjectId.isValid(userId))
+            return res.status(200).json({message:"Invalid request"});
+        const user = await User.findOne({_id:userId});
+        if(!user) return res.status(400).jsoon({message:"User not exists"});
+
+        const connections = await Connection.find({
+            status:"accepted",
+            $or :[
+                {
+                    fromUserId:user._id,
+                },{
+                    toUserId:user._id,
+                }
+            ]
+        })
+        .populate("fromUserId","firstName lastName userName profileImage")
+        .populate("toUserId","firstName lastName userName profileImage");
+
+        const filteredConnections = connections.map((data)=>{
+            if(data.fromUserId._id.equals(user._id)) return toUserId;
+            return data.fromUserId;
+        })
+
+        res.status(200).json({
+            message:"user connections fetched successfully",
+            connections:filteredConnections,
+        })
+    }catch(err){
+        res.status(500).json({
+            message:err.message,
+        })
+    }
+}
 
 module.exports = {
     sendConnection,
@@ -208,4 +244,5 @@ module.exports = {
     getConnections,
     getUserRequests,
     getUserSentRequests,
+    getUsersConnections
 }

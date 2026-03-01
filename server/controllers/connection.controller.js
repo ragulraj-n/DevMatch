@@ -134,6 +134,39 @@ const handleConnection = async (req,res) =>{
     }
 }
 
+const getConnections = async (req,res) =>{
+    try{
+        const user = req.user;
+        const connections = await Connection.find({
+            status:"accepted",
+            $or :[
+                {
+                    fromUserId:user._id,
+                },{
+                    toUserId:user._id,
+                }
+            ]
+        })
+        .populate("fromUserId","firstName lastName userName profileImage")
+        .populate("toUserId","firstName lastName userName profileImage");
+
+        const filteredConnections = connections.map((data)=>{
+            if(data.fromUserId._id.equals(user._id)) return toUserId;
+            return data.fromUserId;
+        })
+
+        res.status(200).json({
+            message:"user connections fetched successfully",
+            connections:filteredConnections,
+        })
+    }catch(err){
+        res.status(500).json({
+            message:err.message,
+        })
+    }
+
+}
+
 const getUserRequests = async (req,res) =>{
     try{
         const user = req.user;
@@ -172,6 +205,7 @@ const getUserSentRequests = async (req,res) =>{
 module.exports = {
     sendConnection,
     handleConnection,
+    getConnections,
     getUserRequests,
     getUserSentRequests,
 }

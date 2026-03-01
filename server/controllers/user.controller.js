@@ -1,4 +1,15 @@
-const User = require("../models/User")
+const User = require("../models/User");
+
+const getLoggedUserProfile = async (req,res) =>{
+    try{
+        const user = req.user;
+        res.status(200).json({message:"user profile fetched successfully",
+            user,
+        });
+    }catch(err){
+        res.status(400).json({message:err.message});
+    }
+} 
 
 const getUserProfile = async (req,res) =>{
     try{
@@ -78,5 +89,6 @@ const editUserProfile = async (req,res) =>{
 
 module.exports = {
     getUserProfile,
-    editUserProfile
+    editUserProfile,
+    getLoggedUserProfile
 }

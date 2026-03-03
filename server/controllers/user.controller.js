@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const mongoose = require("mongoose");
 
 const getLoggedUserProfile = async (req,res) =>{
     try{
@@ -89,16 +90,9 @@ const editUserProfile = async (req,res) =>{
 
 const addUserProject = async (req,res) =>{
    try{
-     const userNameParams = req.params.userName;
-     const loggedInUser = req.user;
-
-    if(!loggedInUser || userNameParams !== loggedInUser.userName)
-            return res.status(403).json({
-                message:"Unauthorized access",
-    })
-
     const user = req.user;
     const {title,description,techStack,githubLink,liveLink,image} = req.body;
+    if(!title) return res.status(400).json({message:"Title not found in request"});
 
     user.projects.push({
                     title,
@@ -111,15 +105,66 @@ const addUserProject = async (req,res) =>{
 
     await user.save();
 
-    res.status(201).json({message:"Project updated successfully"});
+    res.status(201).json({message:"Project added successfully"});
 }catch(err){
     res.status(500).json({message:err.message});
 }
+}
+
+const updateUserProject = async (req,res) =>{
+    try {
+    const userId = req.user._id;
+    const { projectId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+      return res.status(400).json({ message: "Invalid request" });
+    }
+
+    const allowedFields = [
+      "title",
+      "description",
+      "techStack",
+      "githubLink",
+      "liveLink",
+      "image"
+    ];
+
+    const updateFields = {};
+
+    for (const field of allowedFields) {
+      if (req.body[field] !== undefined) {
+        updateFields[`projects.$.${field}`] = req.body[field];
+      }
+    }
+
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({ message: "No valid fields to update" });
+    }
+
+    const result = await User.updateOne(
+      { _id: userId, "projects._id": projectId },
+      { $set: updateFields }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    return res.status(200).json({
+      message: "Project updated successfully"
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      message: err.message,
+    });
+  }
 }
 
 module.exports = {
     getUserProfile,
     editUserProfile,
     getLoggedUserProfile,
-    addUserProject
+    addUserProject,
+    updateUserProject
 }

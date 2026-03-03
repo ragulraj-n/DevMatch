@@ -143,8 +143,8 @@ const validateEditProfile = [
 const validateProject = [
 
     body("title")
+        .optional()
         .trim()
-        .notEmpty().withMessage("Title is required")
         .isLength({ min: 5, max: 100 })
         .withMessage("Title must be between 5 and 100 characters")
         .matches(/^[a-zA-Z0-9\s\-_.()]+$/)
@@ -176,12 +176,8 @@ const validateProject = [
             require_protocol: true
         })
         .withMessage("GitHub link must be a valid HTTPS URL")
-        .custom((value) => {
-            if (!value.includes("github.com")) {
-                throw new Error("GitHub link must contain github.com");
-            }
-            return true;
-        }),
+        .custom((value) => value.includes("github.com"))
+        .withMessage("GitHub link must contain github.com"),
 
     body("liveLink")
         .optional()

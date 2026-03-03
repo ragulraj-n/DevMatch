@@ -1,4 +1,4 @@
-const {body, validationResult } = require("express-validator");
+const {body } = require("express-validator");
 
 const validateEditProfile = [
     (req,res,next) =>{
@@ -140,6 +140,70 @@ const validateEditProfile = [
 
 ]
 
+const validateProject = [
+
+    body("title")
+        .trim()
+        .notEmpty().withMessage("Title is required")
+        .isLength({ min: 5, max: 100 })
+        .withMessage("Title must be between 5 and 100 characters")
+        .matches(/^[a-zA-Z0-9\s\-_.()]+$/)
+        .withMessage("Title contains invalid characters"),
+
+    body("description")
+        .optional()
+        .trim()
+        .isLength({ max: 500 })
+        .withMessage("Description cannot exceed 500 characters"),
+
+    body("techStack")
+        .optional()
+        .isArray({ min: 1 })
+        .withMessage("Tech stack must be a non-empty array"),
+
+    body("techStack.*")
+        .optional()
+        .trim()
+        .notEmpty().withMessage("Tech stack items cannot be empty")
+        .isLength({ max: 30 })
+        .withMessage("Tech stack item too long"),
+
+    body("githubLink")
+        .optional()
+        .trim()
+        .isURL({
+            protocols: ["https"],
+            require_protocol: true
+        })
+        .withMessage("GitHub link must be a valid HTTPS URL")
+        .custom((value) => {
+            if (!value.includes("github.com")) {
+                throw new Error("GitHub link must contain github.com");
+            }
+            return true;
+        }),
+
+    body("liveLink")
+        .optional()
+        .trim()
+        .isURL({
+            protocols: ["https"],
+            require_protocol: true
+        })
+        .withMessage("Live link must be a valid HTTPS URL"),
+
+    body("image")
+        .optional()
+        .trim()
+        .isURL({
+            protocols: ["http", "https"],
+            require_protocol: true
+        })
+        .withMessage("Image must be a valid URL")
+
+];
+
 module.exports = {
     validateEditProfile,
+    validateProject,
 }

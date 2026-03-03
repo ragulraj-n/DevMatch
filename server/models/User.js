@@ -72,6 +72,30 @@ const userSchema = mongoose.Schema({
         type:[String],
         default:[]
     },
+    projects: [
+    {
+        title: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        description: {
+            type: String,
+            maxlength: 500,
+        },
+        techStack: {
+            type: [String],
+            default: [],
+        },
+        githubLink: String,
+        liveLink: String,
+        image: String,
+        createdAt: {
+            type: Date,
+            default: Date.now,
+        }
+    }
+    ],
     github: String,
     linkedin: String,
     portfolio: String,

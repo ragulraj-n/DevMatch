@@ -4,6 +4,7 @@ const authRouter = require("./routes/auth.routes")
 const cookieParser = require("cookie-parser");
 const userRouter = require("./routes/user.routes");
 const connectionRouter = require("./routes/connection.routes");
+const feedRouter = require("./routes/feed.routes");
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,7 @@ app.use("/",authRouter);
 app.use("/user",userRouter);
 app.use("/",connectionRouter);
 
+app.use("/feed",feedRouter); 
 
 
 

@@ -106,7 +106,23 @@ const forgotPassword = async (req,res) =>{
     }
 }
 
+const validateResetPassword = async (req,res) =>{
+    try{
+        const {token} = req.body;
+        if(!token) return res.status(400).json({valid: false,
+            message:"token required"});
+        const decodedUser = jwt.verify(token,JWT_PRIVATE_KEY);
 
+        const user = await User.findOne({_id:decodedUser._id});
+        if(!user) return res.status(401).json({valid: false,
+            message:"invalid token"});
+
+        res.status(200).json({valid:true, message:"token is valid"});
+    }catch(err){
+        res.status(500).json({valid: false,
+            message:err.message});
+    }
+}
 
 module.exports = {
     registerUser,

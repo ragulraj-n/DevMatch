@@ -50,7 +50,15 @@ const registerUserValidate = [
 
 ]
 
+const forgotPasswordValidate = [
+    body("email")
+    .isEmail()
+    .withMessage("Email is not valid")
+    .normalizeEmail(),
+]
+
 module.exports = {
     loginUserValidate,
     registerUserValidate,
+    forgotPasswordValidate
 }

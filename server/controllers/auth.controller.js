@@ -88,8 +88,30 @@ const logoutUser = (req,res) =>{
     })
 }
 
+const forgotPassword = async (req,res) =>{
+    try{
+        const {email} = req.body;
+        if(!email) return res.status(400).json({message:"Enter the Email Id"});
+
+        const user = await User.findOne({email});
+        if(!user) return res.status(404).json({message:"User does not exists"});
+
+        const token = jwt.sign({_id: user._id },JWT_PRIVATE_KEY,{ expiresIn: "15m"});
+
+        res.status(200).json({message:"password reset token sent in email",
+            token,
+        });
+    }catch(err){
+        res.status(500).json({message:"internal server error"});
+    }
+}
+
+
+
 module.exports = {
     registerUser,
     loginUser,
     logoutUser,
+    forgotPassword,
+    validateResetPassword
 }

@@ -96,7 +96,7 @@ const forgotPassword = async (req,res) =>{
         const user = await User.findOne({email});
         if(!user) return res.status(404).json({message:"User does not exists"});
 
-        const token = jwt.sign({_id: user._id },JWT_PRIVATE_KEY,{ expiresIn: "15m"});
+        const token = jwt.sign({id: user._id },JWT_PRIVATE_KEY,{ expiresIn: "15m"});
 
         res.status(200).json({message:"password reset token sent in email",
             token,
@@ -113,7 +113,7 @@ const validateResetPassword = async (req,res) =>{
             message:"token required"});
         const decodedUser = jwt.verify(token,JWT_PRIVATE_KEY);
 
-        const user = await User.findOne({_id:decodedUser._id});
+        const user = await User.findOne({_id:decodedUser.id});
         if(!user) return res.status(401).json({valid: false,
             message:"invalid token"});
 
@@ -124,10 +124,29 @@ const validateResetPassword = async (req,res) =>{
     }
 }
 
+const resetPassword = async (req,res) =>{
+try{
+    const saltRounds = 10;
+    const {token,password} = req.body;
+    const decodedUser = jwt.verify(token,JWT_PRIVATE_KEY);
+    const user = await User.findOne({_id:decodedUser.id});
+    if(!user) return res.status(404).json({message:"user doesn't exists"});
+
+    const hashPassword = await bcrypt.hash(password,saltRounds);
+    user.password = hashPassword;
+    await user.save();
+
+    res.status(200).json({message:"user password reset successfully"});
+}catch(err){
+    res.status(500).json({message:err.message});
+}
+}
+
 module.exports = {
     registerUser,
     loginUser,
     logoutUser,
     forgotPassword,
-    validateResetPassword
+    validateResetPassword,
+    resetPassword
 }

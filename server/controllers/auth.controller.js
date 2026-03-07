@@ -142,11 +142,37 @@ try{
 }
 }
 
+const changePassword = async (req,res) =>{
+    try{
+        const saltRounds = 10;
+        const userId = req.user._id;
+        const {password,newPassword} = req.body;
+
+        if(!userId) return res.status(404).json({message:"userId not found"});
+        
+        const user = await User.findOne({_id:userId}).select("+password");
+        if(!user) return res.status(404).json({message:"user doesn't exist"});
+
+        const isValidPassword = await bcrypt.compare(password,user.password);
+        if(!isValidPassword) return res.status(403).json({message:"Invalid password"});
+
+        const hashnewPassword = await bcrypt.hash(newPassword,saltRounds);
+        user.password = hashnewPassword;
+        await user.save();
+
+        res.status(200).json({message:"user's password changed successfully"});
+
+    }catch(err){
+        res.status(400).json({message:err.message});
+    }
+}
+
 module.exports = {
     registerUser,
     loginUser,
     logoutUser,
     forgotPassword,
     validateResetPassword,
-    resetPassword
+    resetPassword,
+    changePassword
 }

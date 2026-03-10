@@ -1,7 +1,8 @@
 const User = require("../models/User")
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const {JWT_PRIVATE_KEY} = require("../config/constant")
+const {JWT_PRIVATE_KEY} = require("../config/constant");
+const { sendEmail } = require("../utils/emailService");
 
 const registerUser = async (req,res) => {
     const saltRounds = 10; 
@@ -98,11 +99,57 @@ const forgotPassword = async (req,res) =>{
 
         const token = jwt.sign({id: user._id },JWT_PRIVATE_KEY,{ expiresIn: "15m"});
 
+        const resetLink = `http://localhost:5173/reset-password/${token}`;
+        const htmpTemplate = (resetLink) =>{
+            return `<!DOCTYPE html>
+            <html>
+            <head>
+            <meta charset="UTF-8">
+            <title>Reset Password</title>
+            </head>
+
+            <body style="font-family: Arial, sans-serif; background:#f4f6f8; padding:40px;">
+
+            <div style="max-width:500px; margin:auto; background:white; padding:30px; border-radius:6px; text-align:center;">
+
+                <h2 style="color:#2563eb; margin-bottom:10px;">DevMatch</h2>
+
+                <p>Hello,</p>
+
+                <p>
+                You requested to reset your password.
+                Click the button below to set a new password.
+                </p>
+
+                <a 
+                href="${resetLink}"
+                style="display:inline-block; margin:20px 0; padding:12px 24px; background:#2563eb; color:white; text-decoration:none; border-radius:5px;">
+                Reset Password
+                </a>
+
+                <p style="font-size:14px; color:#666;">
+                If the button doesn't work, open this link:
+                </p>
+
+                <p style="font-size:14px; word-break:break-all;">
+                ${resetLink}
+                </p>
+
+                <p style="font-size:13px; color:#888; margin-top:20px;">
+                If you didn't request this, you can ignore this email.
+                </p>
+            </div>
+
+            </body>
+            </html>`
+        }
+
+        await sendEmail(email,"Reset Your DevMatch Password",`Reset Your DevMatch Password Click the Link: ${resetLink}`,htmpTemplate(resetLink));
         res.status(200).json({message:"password reset token sent in email",
             token,
         });
     }catch(err){
-        res.status(500).json({message:"internal server error"});
+        res.status(500).json({message:err.message});
     }
 }
 

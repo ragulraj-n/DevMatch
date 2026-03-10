@@ -3,14 +3,12 @@ const User = require("../models/User")
 
 const sendFeed = async (req,res) =>{
     try{
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 20;
+        const page = Math.min(1, Number(req.query.skip) || 1);
+        const limit = Math.min(20, Number(req.query.limit) || 10);
         const loggedInUser = req.user;
         const hideUsers = new Set();
-
-        if(limit>30) limit=30;
-
         const skip = (page-1)*limit;
+        
         const userConnection = await Connection.find({
             $or:[
                 {fromUserId:loggedInUser._id},

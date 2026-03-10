@@ -10,8 +10,10 @@ const searchUsers = async (req, res) => {
       });
     }
 
-    const limit = Math.min(parseInt(req.query.limit) || 10, 20);
-
+    const limit = Number(req.query.limit) || 10;
+    const page = Number(req.query.page) || 1;
+    if(limit>20) limit=20;
+    const skip = (page-1)*limit;
     const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const words = escaped.split(/\s+/);
     const firstWord = words[0];
@@ -61,7 +63,7 @@ const searchUsers = async (req, res) => {
       },
 
       { $sort: { searchScore: -1 } },
-
+      { $skip: skip },
       { $limit: limit },
 
       {
@@ -102,8 +104,8 @@ const searchUserSuggestion = async (req, res) => {
       });
     }
 
-    const limit = Math.min(parseInt(req.query.limit) || 10, 20);
-
+    const limit = Number(req.query.limit) || 10;
+    if(limit>20) limit=10;
     const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const words = escaped.split(/\s+/);
     const firstWord = words[0];

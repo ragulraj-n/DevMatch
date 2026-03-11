@@ -2,9 +2,19 @@ const express = require("express");
 const { authUser } = require("../middlewares/auth.middleware");
 const { sendConnection, handleConnection, getConnections,getUserRequests, getUserSentRequests, deleteConnection } = require("../controllers/connection.controller");
 const { validatesendConnection } = require("../utils/validateConnectionRequest");
+const createRateLimiter = require("../utils/createRateLimiter");
 const connectionRouter = express.Router();
 
-connectionRouter.post("/connections/:status/:toUserId",authUser,validatesendConnection,sendConnection);
+const sendConnectionRateLimiter = createRateLimiter({
+    max:60,
+});
+
+const sendConenctionRateLimiter = createRateLimiter({
+    max:20,
+});
+
+connectionRouter.use(sendConnectionRateLimiter);
+connectionRouter.post("/connections/:status/:toUserId",authUser,sendConenctionRateLimiter,validatesendConnection,sendConnection);
 connectionRouter.patch("/connections/:connectionId/:status",authUser,handleConnection);
 connectionRouter.get("/connections/requests",authUser,getUserRequests);
 connectionRouter.get("/connections/requests/sent",authUser,getUserSentRequests);

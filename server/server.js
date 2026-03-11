@@ -6,11 +6,18 @@ const userRouter = require("./routes/user.routes");
 const connectionRouter = require("./routes/connection.routes");
 const feedRouter = require("./routes/feed.routes");
 const searchRouter = require("./routes/search.routes");
+const createRateLimiter = require("./utils/createRateLimiter");
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+const appRateLimiter = createRateLimiter({
+    windowMs:60*1000,
+    max:200,
+});
+
+app.use(appRateLimiter);
 app.use("/auth",authRouter);
 app.use("/user",userRouter);
 app.use("/",connectionRouter);

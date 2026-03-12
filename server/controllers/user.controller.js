@@ -1,22 +1,20 @@
 const User = require("../models/User");
 const mongoose = require("mongoose");
 const asyncHandler = require("../utils/AsyncHandler");
+const ApiResponse = require("../utils/ApiResponse");
+const ApiError = require("../utils/ApiError");
 
 const getLoggedUserProfile = asyncHandler(async (req,res) =>{
         const user = req.user;
-        res.status(200).json({message:"user profile fetched successfully",
-            user,
-        }); 
+        res.status(200).json(new ApiResponse(200,"User profile fetched successfully",user)); 
 })
 
 const getUserProfile = asyncHandler(async (req,res) =>{
         const userNameParams = req.params.userName;
-
         const user = await User.findOne({ userName: userNameParams });
 
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
+        if (!user) 
+          throw new ApiError(404,"USER_NOT_FOUND","user not found");
 
         const isOwner = req.user && req.user.userName === userNameParams;
 
@@ -40,10 +38,7 @@ const getUserProfile = asyncHandler(async (req,res) =>{
             responseData.email = user.email;
         }
 
-        res.status(200).json({
-            message: "User data received successfully",
-            data: responseData
-        });
+        res.status(200).json(new ApiResponse(200,"profile fetched successfully",responseData));
 })
 
 const editUserProfile = asyncHandler(async (req,res) =>{
@@ -51,31 +46,25 @@ const editUserProfile = asyncHandler(async (req,res) =>{
         const loggedInUser = req.user;
 
         if(!loggedInUser || userNameParams !== loggedInUser.userName) 
-            return res.status(403).json({
-                message:"Unauthorized access",
-        })
+              throw new ApiError(403,"FORBIDDEN","can't edit another user profile");
 
         if(req.body.userName){
             const existingUser  = await User.findOne({userName:req.body.userName});
-            if(existingUser && !existingUser._id.equals(loggedInUser._id)){
-               return res.status(400).json({
-                    message:"userName already exists , try another userName",
-                })
-                }
-            }
+            if(existingUser && !existingUser._id.equals(loggedInUser._id))
+                throw new ApiError(409,"USERNAME_TAKEN","Username is already taken");
+        }    
 
         Object.keys(req.body).forEach(key => loggedInUser[key] = req.body[key]);
-        await loggedInUser.save();
+        const user = await loggedInUser.save();
 
-        res.status(200).json({
-            message:"user profile updated successfully",
-        })
+        res.status(200).json(new ApiResponse(200,"profile updated successfully",user));
 })
 
 const addUserProject = asyncHandler(async (req,res) =>{
     const user = req.user;
     const {title,description,techStack,githubLink,liveLink,image} = req.body;
-    if(!title) return res.status(400).json({message:"Title not found in request"});
+    if(!title) 
+      throw new ApiError(400,"MISSING_REQUIRED_FIELD","title is required");
 
     user.projects.push({
                     title,
@@ -86,9 +75,9 @@ const addUserProject = asyncHandler(async (req,res) =>{
                     image
             });
 
-    await user.save();
+    const updatedUser = await user.save();
 
-    res.status(201).json({message:"Project added successfully"});
+    res.status(201).json(new ApiResponse(201,"Project added successfully",updatedUser));
 })
 
 const updateUserProject = asyncHandler(async (req,res) =>{
@@ -96,7 +85,7 @@ const updateUserProject = asyncHandler(async (req,res) =>{
     const { projectId } = req.params;
 
     if (!mongoose.Types.ObjectId.isValid(projectId)) {
-      return res.status(400).json({ message: "Invalid request" });
+      throw new ApiError(400,"INVALID_REQUEST","invalid projectId");
     }
 
     const allowedFields = [
@@ -116,22 +105,18 @@ const updateUserProject = asyncHandler(async (req,res) =>{
       }
     }
 
-    if (Object.keys(updateFields).length === 0) {
-      return res.status(400).json({ message: "No valid fields to update" });
-    }
+    if (Object.keys(updateFields).length === 0) 
+      throw new ApiError(400,"DUPLICATE_RESOURCE","no field to update");
 
     const result = await User.updateOne(
       { _id: userId, "projects._id": projectId },
       { $set: updateFields }
     );
 
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ message: "Project not found" });
-    }
+    if (result.matchedCount === 0) 
+      throw new ApiError(404,"PROJECT_NOT_FOUND","project not found");
 
-    return res.status(200).json({
-      message: "Project updated successfully"
-    });
+    res.status(200).json(new ApiResponse(200,"project updated successfully",result));
 })
 
 module.exports = {

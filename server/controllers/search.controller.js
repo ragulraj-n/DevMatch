@@ -1,13 +1,12 @@
 const User = require("../models/User");
+const ApiError = require("../utils/ApiError");
+const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/AsyncHandler");
 
 const searchUsers = asyncHandler(async (req, res) => {
     const q = req.query.q?.trim();
     if (!q || q.length < 2) {
-      return res.status(400).json({
-        success: false,
-        message: "Search query must contain at least 2 characters",
-      });
+      throw new ApiError(400,"VALIDATION_ERROR","query must contain at least 2 characters");
     }
 
     const page = Math.min(1, Number(req.query.skip) || 1);
@@ -79,21 +78,13 @@ const searchUsers = asyncHandler(async (req, res) => {
       },
     ]);
 
-    return res.status(200).json({
-      success: true,
-      count: users.length,
-      users,
-    });
+    res.status(200).json(new ApiResponse(200,"search data fetched successfully"),users);
 })
 
 const searchUserSuggestion = asyncHandler(async (req, res) => {
     const q = req.query.q?.trim();
-    if (!q || q.length < 2) {
-      return res.status(400).json({
-        success: false,
-        message: "Search query must contain at least 2 characters",
-      });
-    }
+    if (!q || q.length < 2) 
+     throw new ApiError(400,"VALIDATION_ERROR","query must contain at least 2 characters");
 
     const limit = Math.min(20, Number(req.query.limit) || 10);
     const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -159,11 +150,7 @@ const searchUserSuggestion = asyncHandler(async (req, res) => {
       },
     ]);
 
-    return res.status(200).json({
-      success: true,
-      count: users.length,
-      users,
-    });
+    return res.status(200).json(new ApiResponse(200,"suggestion fetched successfully",users));
 })
 
 module.exports = { searchUsers,

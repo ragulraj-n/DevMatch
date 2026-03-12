@@ -43,7 +43,7 @@ const registerUser = asyncHandler(async (req,res) => {
     });
 
     res.status(201).json(
-        new ApiResponse(200,"User created successfully",user),
+        new ApiResponse(201,"User created successfully",user),
     )
 })
 
@@ -66,6 +66,7 @@ const loginUser = asyncHandler(async (req,res) =>{
             sameSite:"strict",
         });
 
+        user.password = undefined;
         res.status(200).json(new ApiResponse(200,"User Logged In successfully",user));
 })
 
@@ -86,7 +87,7 @@ const forgotPassword = asyncHandler(async (req,res) =>{
 
         const user = await User.findOne({email});
         if(!user) 
-            throw new ApiError(400,"USER_NOT_FOUND","User not found");
+            return res.status(200).json(new ApiResponse(200,"If the email exists, reset link will be sent",token));
 
         const token = jwt.sign({id: user._id },JWT_PRIVATE_KEY,{ expiresIn: "15m"});
 
@@ -136,7 +137,7 @@ const forgotPassword = asyncHandler(async (req,res) =>{
         }
 
         // await sendEmail(email,"Reset Your DevMatch Password",`Reset Your DevMatch Password Click the Link: ${resetLink}`,htmpTemplate(resetLink));
-        res.status(200).json(new ApiResponse(200,"password reset token sent in email",token));
+        res.status(200).json(new ApiResponse(200,"If the email exists, reset link will be sent",token));
 })
 
 const validateResetPassword = asyncHandler(async (req,res) =>{

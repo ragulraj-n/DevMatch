@@ -1,5 +1,6 @@
 const {body } = require("express-validator");
 const asyncHandler = require("../utils/AsyncHandler");
+const ApiError = require("../utils/ApiError");
 
 const validateEditProfile = [
    asyncHandler((req,res,next) =>{
@@ -10,9 +11,8 @@ const validateEditProfile = [
         const allowedList = ["firstName","lastName","userName","bio","profileImage","location","experienceLevel","availabilityStatus","skills","interests","github","linkedin","portfolio"];
     
         const isValid = Object.keys(req.body).every((key) => allowedList.includes(key));
-        if(!isValid) res.status(400).json({
-            message:"Unallowed data sent to edit profile",
-        })
+        if(!isValid) 
+            throw new ApiError(403,"FORBIDDEN","Unallowed field sent to edit");
         next();
 }),
 

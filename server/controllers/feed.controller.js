@@ -1,9 +1,10 @@
 const Connection  = require("../models/Connection");
 const User = require("../models/User");
+const ApiResponse = require("../utils/ApiResponse");
 const asyncHandler = require("../utils/AsyncHandler");
 
 const sendFeed = asyncHandler(async (req,res) =>{
-        const page = Math.min(1, Number(req.query.skip) || 1);
+        const page = Number(req.query.page) || 1;
         const limit = Math.min(20, Number(req.query.limit) || 10);
         const loggedInUser = req.user;
         const hideUsers = new Set();
@@ -29,9 +30,7 @@ const sendFeed = asyncHandler(async (req,res) =>{
         .skip(skip)
         .limit(limit);
 
-        res.status(200).json({message: "user data fetced successfully",
-            data:users,
-        });
+        res.status(200).json(new ApiResponse(200,"feed fetched successfully",users));
 })
 
 module.exports = {

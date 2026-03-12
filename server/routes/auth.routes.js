@@ -1,7 +1,7 @@
 const express = require("express");
 const authRouter = express.Router();
 const {registerUser, loginUser , logoutUser, forgotPassword, validateResetPassword, resetPassword, changePassword} = require("../controllers/auth.controller");
-const {validateResult} = require("../utils/validateRequest");
+const { validateResult } = require("../middlewares/validateRequest.middleware");
 const {loginUserValidate , registerUserValidate, forgotPasswordValidate, resetPasswordValidate, changePasswordValidate} = require("../middlewares/authValidate.middleware");
 const {authUser} = require("../middlewares/auth.middleware");
 const createRateLimiter = require("../utils/createRateLimiter");

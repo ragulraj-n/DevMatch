@@ -3,7 +3,7 @@ const userRouter = express.Router();
 const {optionalAuthUser , authUser} = require("../middlewares/auth.middleware");
 const {getUserProfile,editUserProfile, getLoggedUserProfile, addUserProject,updateUserProject} = require("../controllers/user.controller")
 const {validateEditProfile, validateProject} = require("../middlewares/user.middleware");
-const { validateResult } = require("../utils/validateRequest");
+const { validateResult } = require("../middlewares/validateRequest.middleware");
 const { getUsersConnections } = require("../controllers/connection.controller");
 const createRateLimiter = require("../utils/createRateLimiter");
 

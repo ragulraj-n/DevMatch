@@ -1,7 +1,7 @@
 const User = require("../models/User");
+const asyncHandler = require("../utils/AsyncHandler");
 
-const searchUsers = async (req, res) => {
-  try {
+const searchUsers = asyncHandler(async (req, res) => {
     const q = req.query.q?.trim();
     if (!q || q.length < 2) {
       return res.status(400).json({
@@ -84,18 +84,9 @@ const searchUsers = async (req, res) => {
       count: users.length,
       users,
     });
-    
-  } catch (error) {
-    console.error("Search error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-}
+})
 
-const searchUserSuggestion = async (req, res) => {
-  try {
+const searchUserSuggestion = asyncHandler(async (req, res) => {
     const q = req.query.q?.trim();
     if (!q || q.length < 2) {
       return res.status(400).json({
@@ -173,15 +164,7 @@ const searchUserSuggestion = async (req, res) => {
       count: users.length,
       users,
     });
-    
-  } catch (error) {
-    console.error("Search error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
-  }
-}
+})
 
 module.exports = { searchUsers,
     searchUserSuggestion

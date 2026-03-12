@@ -1,19 +1,15 @@
 const User = require("../models/User");
 const mongoose = require("mongoose");
+const asyncHandler = require("../utils/AsyncHandler");
 
-const getLoggedUserProfile = async (req,res) =>{
-    try{
+const getLoggedUserProfile = asyncHandler(async (req,res) =>{
         const user = req.user;
         res.status(200).json({message:"user profile fetched successfully",
             user,
-        });
-    }catch(err){
-        res.status(400).json({message:err.message});
-    }
-} 
+        }); 
+})
 
-const getUserProfile = async (req,res) =>{
-    try{
+const getUserProfile = asyncHandler(async (req,res) =>{
         const userNameParams = req.params.userName;
 
         const user = await User.findOne({ userName: userNameParams });
@@ -48,15 +44,9 @@ const getUserProfile = async (req,res) =>{
             message: "User data received successfully",
             data: responseData
         });
-    }catch(err){
-        res.status(400).json({
-            message:err.message,
-        })
-    }
-}
+})
 
-const editUserProfile = async (req,res) =>{
-    try{
+const editUserProfile = asyncHandler(async (req,res) =>{
         const userNameParams = req.params.userName;
         const loggedInUser = req.user;
 
@@ -80,16 +70,9 @@ const editUserProfile = async (req,res) =>{
         res.status(200).json({
             message:"user profile updated successfully",
         })
+})
 
-}catch(err){
-        res.status(500).json({
-            message:err.message,
-        })
-    }
-}
-
-const addUserProject = async (req,res) =>{
-   try{
+const addUserProject = asyncHandler(async (req,res) =>{
     const user = req.user;
     const {title,description,techStack,githubLink,liveLink,image} = req.body;
     if(!title) return res.status(400).json({message:"Title not found in request"});
@@ -106,13 +89,9 @@ const addUserProject = async (req,res) =>{
     await user.save();
 
     res.status(201).json({message:"Project added successfully"});
-}catch(err){
-    res.status(500).json({message:err.message});
-}
-}
+})
 
-const updateUserProject = async (req,res) =>{
-    try {
+const updateUserProject = asyncHandler(async (req,res) =>{
     const userId = req.user._id;
     const { projectId } = req.params;
 
@@ -153,13 +132,7 @@ const updateUserProject = async (req,res) =>{
     return res.status(200).json({
       message: "Project updated successfully"
     });
-
-  } catch (err) {
-    return res.status(500).json({
-      message: err.message,
-    });
-  }
-}
+})
 
 module.exports = {
     getUserProfile,

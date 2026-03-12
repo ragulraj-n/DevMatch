@@ -1,8 +1,8 @@
 const {body } = require("express-validator");
+const asyncHandler = require("../utils/AsyncHandler");
 
 const validateEditProfile = [
-    (req,res,next) =>{
-    try{
+   asyncHandler((req,res,next) =>{
         if(!req.body) return res.status(400).json({
             message:"Data required to edit",
         })
@@ -14,12 +14,7 @@ const validateEditProfile = [
             message:"Unallowed data sent to edit profile",
         })
         next();
-    }catch(err){
-        res.status(400).json({
-            message:err.message,
-        })
-    }
-},
+}),
 
   body("firstName")
     .optional()

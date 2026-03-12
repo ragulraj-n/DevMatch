@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 const { JWT_PRIVATE_KEY } = require("../config/constant");
 const User = require("../models/User");
+const asyncHandler = require("../utils/AsyncHandler");
 
-const authUser = async (req,res,next) =>{
-    try{
+const authUser = asyncHandler(async (req,res,next) =>{
     const { token } = req.cookies;
     if(!token) return res.status(400).json({
         message:"Login again",
@@ -13,15 +13,9 @@ const authUser = async (req,res,next) =>{
     if(!user) return res.status(401).json("User not exists");
     req.user = user;
     next();
-    }catch(err){
-        res.status(401).json({
-            message:err.message,
-        })
-    }
-}
+})
 
-const optionalAuthUser = async(req,res,next) =>{
-    try{
+const optionalAuthUser = asyncHandler(async(req,res,next) =>{
     const { token } = req.cookies;
     if(!token) return next();
 
@@ -30,10 +24,7 @@ const optionalAuthUser = async(req,res,next) =>{
     if(!user) return next();
     req.user = user;
     next();
-    }catch(err){
-        next();
-    }
-}
+    });
 
 module.exports = {
     authUser,

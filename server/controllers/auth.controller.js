@@ -3,10 +3,10 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {JWT_PRIVATE_KEY} = require("../config/constant");
 const { sendEmail } = require("../utils/emailService");
+const asyncHandler = require("../utils/AsyncHandler");
 
-const registerUser = async (req,res) => {
+const registerUser = asyncHandler(async (req,res) => {
     const saltRounds = 10; 
-    try{
     const {firstName, lastName, email, password} = req.body;
     
     const existingUser = await User.findOne({email});
@@ -42,14 +42,10 @@ const registerUser = async (req,res) => {
     res.status(201).json({
         message:"User created successfully",
     })
-    }catch(err){
-        res.status(400).json({message: err.message});
-    }
+})
 
-}
+const loginUser = asyncHandler(async (req,res) =>{
 
-const loginUser = async (req,res) =>{
-   try{
         const {email, password} = req.body;
         
         const user = await User.findOne({email}).select("+password");
@@ -72,14 +68,9 @@ const loginUser = async (req,res) =>{
         res.status(200).json({
             message:"User logged In successfully"
         })
-   }catch(err){
-        res.status(400).json({
-            message: err.message,
-        })
-   }
-}
+})
 
-const logoutUser = (req,res) =>{
+const logoutUser =  asyncHandler((req,res) =>{
     res.cookie("token",null,{
         expires:new Date(Date.now()),
     })
@@ -87,10 +78,9 @@ const logoutUser = (req,res) =>{
     res.status(200).json({
         message:"User Logged Out successfully",
     })
-}
+})
 
-const forgotPassword = async (req,res) =>{
-    try{
+const forgotPassword = asyncHandler(async (req,res) =>{
         const {email} = req.body;
         if(!email) return res.status(400).json({message:"Enter the Email Id"});
 
@@ -148,13 +138,9 @@ const forgotPassword = async (req,res) =>{
         res.status(200).json({message:"password reset token sent in email",
             token,
         });
-    }catch(err){
-        res.status(500).json({message:err.message});
-    }
-}
+})
 
-const validateResetPassword = async (req,res) =>{
-    try{
+const validateResetPassword = asyncHandler(async (req,res) =>{
         const {token} = req.body;
         if(!token) return res.status(400).json({valid: false,
             message:"token required"});
@@ -165,14 +151,9 @@ const validateResetPassword = async (req,res) =>{
             message:"invalid token"});
 
         res.status(200).json({valid:true, message:"token is valid"});
-    }catch(err){
-        res.status(500).json({valid: false,
-            message:err.message});
-    }
-}
+})
 
-const resetPassword = async (req,res) =>{
-try{
+const resetPassword = asyncHandler(async (req,res) =>{
     const saltRounds = 10;
     const {token,password} = req.body;
     const decodedUser = jwt.verify(token,JWT_PRIVATE_KEY);
@@ -184,13 +165,9 @@ try{
     await user.save();
 
     res.status(200).json({message:"user password reset successfully"});
-}catch(err){
-    res.status(500).json({message:err.message});
-}
-}
+})
 
-const changePassword = async (req,res) =>{
-    try{
+const changePassword = asyncHandler(async (req,res) =>{
         const saltRounds = 10;
         const userId = req.user._id;
         const {password,newPassword} = req.body;
@@ -208,11 +185,7 @@ const changePassword = async (req,res) =>{
         await user.save();
 
         res.status(200).json({message:"user's password changed successfully"});
-
-    }catch(err){
-        res.status(400).json({message:err.message});
-    }
-}
+})
 
 module.exports = {
     registerUser,

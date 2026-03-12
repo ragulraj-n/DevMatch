@@ -1,8 +1,8 @@
 const Connection  = require("../models/Connection");
-const User = require("../models/User")
+const User = require("../models/User");
+const asyncHandler = require("../utils/AsyncHandler");
 
-const sendFeed = async (req,res) =>{
-    try{
+const sendFeed = asyncHandler(async (req,res) =>{
         const page = Math.min(1, Number(req.query.skip) || 1);
         const limit = Math.min(20, Number(req.query.limit) || 10);
         const loggedInUser = req.user;
@@ -32,11 +32,7 @@ const sendFeed = async (req,res) =>{
         res.status(200).json({message: "user data fetced successfully",
             data:users,
         });
-    }catch(err){
-        res.status(500).json({message:err.message});
-    }
-
-}
+})
 
 module.exports = {
     sendFeed,

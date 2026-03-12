@@ -1,9 +1,10 @@
 const { default: mongoose } = require("mongoose");
 const Connection = require("../models/Connection");
 const User = require("../models/User");
+const asyncHandler = require("../utils/AsyncHandler");
 
-const sendConnection = async (req,res) =>{
-    try{
+const sendConnection = asyncHandler(async (req,res) =>{
+
         const fromUserId = req.user._id;
         const { toUserId , status } = req.params;
         const toUser = await User.findById(toUserId);
@@ -97,16 +98,9 @@ const sendConnection = async (req,res) =>{
     return res.status(400).json({
     message: "Invalid connection action",
     });
+})
 
-    }catch(err){
-        res.status(400).json({
-            message:err.message,
-        })
-    }
-}
-
-const handleConnection = async (req,res) =>{
-    try{
+const handleConnection = asyncHandler(async (req,res) =>{
         const {connectionId, status} = req.params;
     if(!connectionId || !status)
         return res.status(400).json({message:"Invalid request"});
@@ -127,15 +121,9 @@ const handleConnection = async (req,res) =>{
     existingConnection.status=status; 
     await existingConnection.save();
     res.status(200).json({message:`User request ${status} successfully`});
-    }catch(err){
-        res.status(500).json({
-            message:err.message,
-        })
-    }
-}
+})
 
-const getConnections = async (req,res) =>{
-    try{
+const getConnections = asyncHandler(async (req,res) =>{
         const user = req.user;
         const connections = await Connection.find({
             status:"accepted",
@@ -159,16 +147,10 @@ const getConnections = async (req,res) =>{
             message:"user connections fetched successfully",
             connections:filteredConnections,
         })
-    }catch(err){
-        res.status(500).json({
-            message:err.message,
-        })
-    }
 
-}
+})
 
-const getUserRequests = async (req,res) =>{
-    try{
+const getUserRequests = asyncHandler(async (req,res) =>{
         const user = req.user;
         const requestList = await Connection.find({
             toUserId:user._id,
@@ -178,14 +160,9 @@ const getUserRequests = async (req,res) =>{
         res.status(200).json({message:"User pending requests fetched successfully",
             requestList,
         });
-    }catch(err){
-        res.status(500).json({message:err.message});
-    }
+})
 
-}
-
-const getUserSentRequests = async (req,res) =>{
-    try{
+const getUserSentRequests = asyncHandler(async (req,res) =>{
         const user = req.user;
         const requestList = await Connection.find({
             fromUserId:user._id,
@@ -195,14 +172,9 @@ const getUserSentRequests = async (req,res) =>{
         res.status(200).json({message:"User sent pending requests fetched successfully",
             requestList,
         });
-    }catch(err){
-        res.status(500).json({message:err.message});
-    }
+})
 
-}
-
-const getUsersConnections = async (req,res) =>{
-    try{
+const getUsersConnections = asyncHandler(async (req,res) =>{
         const {userId} = req.params;
         if(!mongoose.Types.ObjectId.isValid(userId))
             return res.status(200).json({message:"Invalid request"});
@@ -231,15 +203,9 @@ const getUsersConnections = async (req,res) =>{
             message:"user connections fetched successfully",
             connections:filteredConnections,
         })
-    }catch(err){
-        res.status(500).json({
-            message:err.message,
-        })
-    }
-}
+})
 
-const deleteConnection = async (req,res) =>{
-    try{
+const deleteConnection = asyncHandler(async (req,res) =>{
         const {connectionId} = req.params;
         const user = req.user;
         if(!mongoose.Types.ObjectId.isValid(connectionId))
@@ -254,10 +220,7 @@ const deleteConnection = async (req,res) =>{
 
         await connection.deleteOne();
         res.status(200).json({message:"Connection deleted successfully"});
-    }catch(err){
-        res.status(500).json({message:err.message});
-    }
-}
+})
 
 module.exports = {
     sendConnection,

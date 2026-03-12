@@ -24,7 +24,6 @@ const sendEmail = async (to,subject,text,html) =>{
     }catch(err){
         console.error("Email error:", err);
         throw new Error("Email failed");
-
     }
 }
 

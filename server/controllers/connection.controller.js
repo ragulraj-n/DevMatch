@@ -179,7 +179,7 @@ const getUsersConnections = asyncHandler(async (req,res) =>{
         if(!mongoose.Types.ObjectId.isValid(userId))
             return res.status(200).json({message:"Invalid request"});
         const user = await User.findOne({_id:userId});
-        if(!user) return res.status(400).jsoon({message:"User not exists"});
+        if(!user) return res.status(400).json({message:"User not exists"});
 
         const connections = await Connection.find({
             status:"accepted",

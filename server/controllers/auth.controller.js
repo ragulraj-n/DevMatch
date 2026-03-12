@@ -4,13 +4,16 @@ const jwt = require("jsonwebtoken");
 const {JWT_PRIVATE_KEY} = require("../config/constant");
 const { sendEmail } = require("../utils/emailService");
 const asyncHandler = require("../utils/AsyncHandler");
+const ApiResponse = require("../utils/ApiResponse");
+const ApiError = require("../utils/ApiError");
 
 const registerUser = asyncHandler(async (req,res) => {
     const saltRounds = 10; 
     const {firstName, lastName, email, password} = req.body;
     
     const existingUser = await User.findOne({email});
-    if(existingUser) return res.status(400).json({message: "User already exists"});
+    if(existingUser) 
+        throw new ApiError(409,"EMAIL_ALREADY_EXISTS","Email already registered");   
 
     let userName = (firstName+lastName)
                     .toLowerCase()
@@ -39,9 +42,9 @@ const registerUser = asyncHandler(async (req,res) => {
         httpOnly:true,
     });
 
-    res.status(201).json({
-        message:"User created successfully",
-    })
+    res.status(201).json(
+        new ApiResponse(200,"User created successfully",user),
+    )
 })
 
 const loginUser = asyncHandler(async (req,res) =>{
@@ -49,14 +52,12 @@ const loginUser = asyncHandler(async (req,res) =>{
         const {email, password} = req.body;
         
         const user = await User.findOne({email}).select("+password");
-        if(!user) return res.status(400).json({
-            message:"Invalid login credentials",
-        })
+        if(!user) 
+            throw new ApiError(401,"INVALID_CREDENTIALS","Invalid email or password");
         
         const isValidPassword = await bcrypt.compare(password,user.password);
-        if(!isValidPassword) return res.status(400).json({
-            message:"Invalid login credentials",
-        })
+        if(!isValidPassword) 
+            throw new ApiError(401,"INVALID_CREDENTIALS","Invalid email or password");
 
         const token = jwt.sign({userId:user._id},JWT_PRIVATE_KEY);
 
@@ -65,9 +66,7 @@ const loginUser = asyncHandler(async (req,res) =>{
             sameSite:"strict",
         });
 
-        res.status(200).json({
-            message:"User logged In successfully"
-        })
+        res.status(200).json(new ApiResponse(200,"User Logged In successfully",user));
 })
 
 const logoutUser =  asyncHandler((req,res) =>{
@@ -82,10 +81,12 @@ const logoutUser =  asyncHandler((req,res) =>{
 
 const forgotPassword = asyncHandler(async (req,res) =>{
         const {email} = req.body;
-        if(!email) return res.status(400).json({message:"Enter the Email Id"});
+        if(!email) 
+            throw new ApiError(400,"MISSING_REQUIRED_FIELD","email is required");
 
         const user = await User.findOne({email});
-        if(!user) return res.status(404).json({message:"User does not exists"});
+        if(!user) 
+            throw new ApiError(400,"USER_NOT_FOUND","User not found");
 
         const token = jwt.sign({id: user._id },JWT_PRIVATE_KEY,{ expiresIn: "15m"});
 
@@ -134,37 +135,36 @@ const forgotPassword = asyncHandler(async (req,res) =>{
             </html>`
         }
 
-        await sendEmail(email,"Reset Your DevMatch Password",`Reset Your DevMatch Password Click the Link: ${resetLink}`,htmpTemplate(resetLink));
-        res.status(200).json({message:"password reset token sent in email",
-            token,
-        });
+        // await sendEmail(email,"Reset Your DevMatch Password",`Reset Your DevMatch Password Click the Link: ${resetLink}`,htmpTemplate(resetLink));
+        res.status(200).json(new ApiResponse(200,"password reset token sent in email",token));
 })
 
 const validateResetPassword = asyncHandler(async (req,res) =>{
         const {token} = req.body;
-        if(!token) return res.status(400).json({valid: false,
-            message:"token required"});
+        if(!token) 
+            throw new ApiError(400,"MISSING_REQUIRED_FIELD","Reset token is required",);
+
         const decodedUser = jwt.verify(token,JWT_PRIVATE_KEY);
+        
+        const user = await User.findById(decodedUser.id);
+        if(!user) 
+            throw new ApiError(401,"TOKEN_INVALID","Invalid authentication token");
 
-        const user = await User.findOne({_id:decodedUser.id});
-        if(!user) return res.status(401).json({valid: false,
-            message:"invalid token"});
-
-        res.status(200).json({valid:true, message:"token is valid"});
+        res.status(200).json(new ApiResponse(200,"token is valid"));
 })
 
 const resetPassword = asyncHandler(async (req,res) =>{
     const saltRounds = 10;
     const {token,password} = req.body;
     const decodedUser = jwt.verify(token,JWT_PRIVATE_KEY);
-    const user = await User.findOne({_id:decodedUser.id});
-    if(!user) return res.status(404).json({message:"user doesn't exists"});
+    const user = await User.findById(decodedUser.id);
+    if(!user) throw new ApiError(404,"USER_NOT_FOUND","user not found");
 
     const hashPassword = await bcrypt.hash(password,saltRounds);
     user.password = hashPassword;
     await user.save();
 
-    res.status(200).json({message:"user password reset successfully"});
+    res.status(200).json(new ApiResponse(200,"user password reset successfully"));
 })
 
 const changePassword = asyncHandler(async (req,res) =>{
@@ -172,19 +172,24 @@ const changePassword = asyncHandler(async (req,res) =>{
         const userId = req.user._id;
         const {password,newPassword} = req.body;
 
-        if(!userId) return res.status(404).json({message:"userId not found"});
+        if(!userId) 
+            throw new ApiError(400,"MISSING_REQUIRED_FIELD","userId not sent");
+
         
         const user = await User.findOne({_id:userId}).select("+password");
-        if(!user) return res.status(404).json({message:"user doesn't exist"});
+        if(!user) 
+            throw new ApiError(404,"USER_NOT_FOUND","user not found");
 
         const isValidPassword = await bcrypt.compare(password,user.password);
-        if(!isValidPassword) return res.status(403).json({message:"Invalid password"});
+        if(!isValidPassword)
+            throw new ApiError(401,"INVALID_CREDENTIALS","invalid password");
+        
 
         const hashnewPassword = await bcrypt.hash(newPassword,saltRounds);
         user.password = hashnewPassword;
         await user.save();
 
-        res.status(200).json({message:"user's password changed successfully"});
+        res.status(200).json(new ApiResponse(200,"password changed successfully"));
 })
 
 module.exports = {

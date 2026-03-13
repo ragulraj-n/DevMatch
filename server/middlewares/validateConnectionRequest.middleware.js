@@ -1,27 +1,23 @@
 const mongoose = require("mongoose");
+const ApiError = require("../utils/ApiError");
 const validatesendConnection = (req,res,next) =>{
         const fromUserId = req.user._id;
         const toUserId = req.params.toUserId;
         const status = req.params.status;
 
-        if(!fromUserId || !toUserId || !status) return res.status(400).json({
-            message:"Invalid Resquest,"
-        })
+        if(!fromUserId || !toUserId || !status) 
+            throw new ApiError(400,"INVALID_REQUEST","Missing request values");
         
-        if(!mongoose.Types.ObjectId.isValid(fromUserId) || !mongoose.Types.ObjectId.isValid(toUserId)) return res.status(400).json({
-            message:"Invalid Request , user id must be valid",
-        })
+        if(!mongoose.Types.ObjectId.isValid(fromUserId) || !mongoose.Types.ObjectId.isValid(toUserId)) 
+            throw new ApiError(400,"INVALID_REQUEST","Invalid userID");
+            
         
         if(status!= "requested" && status!= "ignored")
-            return res.status(400).json({
-            message:"Invalid status resquest,"
-        })
+            throw new ApiError(400,"INVALID_CONNECTION_STATUS","Invalid request status");
 
-        if(fromUserId.equals(toUserId)){
-            return res.status(400).json({
-                message:"User cannot send self request",
-            });
-        }
+
+        if(fromUserId.equals(toUserId))
+            throw new ApiError(403,"CANNOT_CONNECT_SELF","user can't connect self");
     
     next();
 }

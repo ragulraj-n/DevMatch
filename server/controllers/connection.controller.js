@@ -2,16 +2,16 @@ const { default: mongoose } = require("mongoose");
 const Connection = require("../models/Connection");
 const User = require("../models/User");
 const asyncHandler = require("../utils/AsyncHandler");
+const ApiError = require("../utils/ApiError")
+const ApiResponse = require("../utils/ApiResponse");
 
 const sendConnection = asyncHandler(async (req,res) =>{
-
         const fromUserId = req.user._id;
         const { toUserId , status } = req.params;
         const toUser = await User.findById(toUserId);
 
-        if(!toUser) return res.status(400).json({
-            message:"Receiver Not Found",
-        })
+        if(!toUser) 
+            throw new ApiError(404,"USER_NOT_FOUND","Receiver Not Found");
 
         const existingRequest = await Connection.findOne({
             $or : [
@@ -31,15 +31,11 @@ const sendConnection = asyncHandler(async (req,res) =>{
                 toUserId,
                 status,
             })
-           return res.status(201).json({
-            message:` user ${status} successfully`,
-             })
+           return res.status(201).json(new ApiResponse(201,`user ${status} successfully`));
         }
 
         if(existingRequest.status==="accepted")
-            return res.status(400).json({
-            message:`Invalid request , user already ${existingRequest.status}`,
-        });
+            throw new ApiError(409,"CONNECTION_ALREADY_EXISTS","Connection already exists");
 
         if(existingRequest.status === "rejected"){
             if(fromUserId.equals(existingRequest.toUserId)){
@@ -47,80 +43,58 @@ const sendConnection = asyncHandler(async (req,res) =>{
                 existingRequest.toUserId = toUserId;
                 existingRequest.status = status;
                 await existingRequest.save();
-                return res.status(200).json({
-                    message:`User ${status} successfully ,also if already rejected by user`,
-                });
+                return res.status(201).json(new ApiResponse(201,`user ${status} successfully`));
             }
         }
         
         if(existingRequest.fromUserId.equals(fromUserId) && existingRequest.status === status){
-            return res.status(200).json({
-                message: `User already ${status}`,
-            })
+            throw new ApiError(409,"CONNECTION_REQUEST_ALREADY_SENT",`user ${status} already`);
         }
 
         if(existingRequest.fromUserId.equals(fromUserId)){
             existingRequest.status = status;
             await existingRequest.save();
-            return res.status(201).json({
-                message: `${status} successfully`,
-            })
+            return res.status(201).json(new ApiResponse(201,`user ${status} successfully`));
         }
-        
-        if(existingRequest.status === status){
-            if(existingRequest.status === "requested"){
-                existingRequest.status = "accepted";
-                await existingRequest.save();
-            }
-            return res.status(200).json({
-            message:`user ${status} successfully`,
-        });
-    }
         
         if(existingRequest.status === "ignored"){
             existingRequest.fromUserId = fromUserId;
             existingRequest.toUserId = toUserId;
             existingRequest.status = status;
             await existingRequest.save();
-            return res.status(200).json({
-                message:"User requested successfully ,also if already ignored by",
-            });
+            return res.status(201).json(new ApiResponse(201,`Connection ${status} successfully`));
         }
 
         if(existingRequest.status === "requested"){
             existingRequest.status = "accepted";
            await existingRequest.save();
-            return res.status(200).json({
-                message:"User requested accepted",
-            });
+            return res.status(202).json(new ApiResponse(202,"Connection accepted successfully"));
         }
     
-    return res.status(400).json({
-    message: "Invalid connection action",
-    });
+    throw new ApiError(400,"INVALID_CONNECTION_REQUEST","Invalid connection request");
 })
 
 const handleConnection = asyncHandler(async (req,res) =>{
-        const {connectionId, status} = req.params;
+    const {connectionId, status} = req.params;
     if(!connectionId || !status)
-        return res.status(400).json({message:"Invalid request"});
+        throw new ApiError(400,"INVALID_REQUEST","connectionid or status missing");
     if(!mongoose.Types.ObjectId.isValid(connectionId))
-        return res.status(400).json({message:"Invalid request id"});
+        throw new ApiError(400,"INVALID_REQUEST","invalid connectionId");
     if(!(status==="accepted" || status==="rejected"))
-        return res.status(400).json({message:"Invalid request status"});
+        throw new ApiError(400,"INVALID_CONNECTION_STATUS","invalid status");
 
     const existingConnection  = await Connection.findById(connectionId);
     if(!existingConnection)
-        return res.status(404).json({message:"Connection not found"})
+        throw new ApiError(404,"CONNECTION_NOT_FOUND","connection not found");
     if(!existingConnection.toUserId.equals(req.user._id))
-        return res.status(401).json({message:"Unauthorized user access"});
+        throw new ApiError(403,"FORBIDDEN","user can't access");
 
     if(!(existingConnection.status==="requested"))
-        return res.status(400).json({message:"Invalid request status"});
+        throw new ApiError(400,"INVALID_CONNECTION_STATUS","invalid status");
 
     existingConnection.status=status; 
     await existingConnection.save();
-    res.status(200).json({message:`User request ${status} successfully`});
+    res.status(200).json(new ApiResponse(200,`User request ${status} successfully`));
 })
 
 const getConnections = asyncHandler(async (req,res) =>{
@@ -143,10 +117,7 @@ const getConnections = asyncHandler(async (req,res) =>{
             return data.fromUserId;
         })
 
-        res.status(200).json({
-            message:"user connections fetched successfully",
-            connections:filteredConnections,
-        })
+        res.status(200).json(new ApiResponse(200,"connections fetched successfully",filteredConnections));
 
 })
 
@@ -157,9 +128,7 @@ const getUserRequests = asyncHandler(async (req,res) =>{
             status:"requested"
         }).populate("fromUserId","firstName lastName profileImage userName");
 
-        res.status(200).json({message:"User pending requests fetched successfully",
-            requestList,
-        });
+        res.status(200).json(new ApiResponse(200,"pending requests fetched successfully",requestList));
 })
 
 const getUserSentRequests = asyncHandler(async (req,res) =>{
@@ -169,17 +138,16 @@ const getUserSentRequests = asyncHandler(async (req,res) =>{
             status:"requested"
         }).populate("toUserId","firstName lastName profileImage userName");
 
-        res.status(200).json({message:"User sent pending requests fetched successfully",
-            requestList,
-        });
+        res.status(200).json(new ApiResponse(200,"User sent pending requests fetched successfully",requestList));
 })
 
 const getUsersConnections = asyncHandler(async (req,res) =>{
         const {userId} = req.params;
         if(!mongoose.Types.ObjectId.isValid(userId))
-            return res.status(200).json({message:"Invalid request"});
+            throw new ApiError(400,"INVALID_REQUEST","invalid connectionId");
         const user = await User.findOne({_id:userId});
-        if(!user) return res.status(400).json({message:"User not exists"});
+        if(!user) 
+            throw new ApiError(400,"USER_NOT_FOUND","User not found");
 
         const connections = await Connection.find({
             status:"accepted",
@@ -195,31 +163,29 @@ const getUsersConnections = asyncHandler(async (req,res) =>{
         .populate("toUserId","firstName lastName userName profileImage");
 
         const filteredConnections = connections.map((data)=>{
-            if(data.fromUserId._id.equals(user._id)) return toUserId;
+            if(data.fromUserId._id.equals(user._id)) return data.toUserId;
             return data.fromUserId;
         })
 
-        res.status(200).json({
-            message:"user connections fetched successfully",
-            connections:filteredConnections,
-        })
-})
+        res.status(200).json(new ApiResponse(200,"user connections fetched successfully",filteredConnections));
+
+});
 
 const deleteConnection = asyncHandler(async (req,res) =>{
         const {connectionId} = req.params;
         const user = req.user;
         if(!mongoose.Types.ObjectId.isValid(connectionId))
-            return res.status(400).json({message:"Invalid request"});
+            throw new ApiError(400,"INVALID_REQUEST","invalid connectionId");
 
         const connection = await Connection.findById(connectionId);
         if(!connection)
-            return res.status(404).json({message:"Connection not exists"});
+        throw new ApiError(404,"CONNECTION_NOT_FOUND","connection not found");
 
         if(!(user._id.equals(connection.fromUserId)||user._id.equals(connection.toUserId)))
-            return res.status(401).json({message:"Unauthorized access"});
+        throw new ApiError(403,"FORBIDDEN","user can't access");
 
         await connection.deleteOne();
-        res.status(200).json({message:"Connection deleted successfully"});
+        res.status(200).json(new ApiResponse(200,"Connection deleted successfully"));
 })
 
 module.exports = {

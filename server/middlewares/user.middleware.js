@@ -4,9 +4,8 @@ const ApiError = require("../utils/ApiError");
 
 const validateEditProfile = [
    asyncHandler((req,res,next) =>{
-        if(!req.body) return res.status(400).json({
-            message:"Data required to edit",
-        })
+        if(!req.body) 
+          throw new ApiError(400,"INVALID_REQUEST","Fields required to edit");
 
         const allowedList = ["firstName","lastName","userName","bio","profileImage","location","experienceLevel","availabilityStatus","skills","interests","github","linkedin","portfolio"];
     

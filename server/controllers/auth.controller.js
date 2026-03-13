@@ -42,9 +42,7 @@ const registerUser = asyncHandler(async (req,res) => {
         httpOnly:true,
     });
 
-    res.status(201).json(
-        new ApiResponse(201,"User created successfully",user),
-    )
+    res.status(201).json(new ApiResponse(201,"User created successfully",user))
 })
 
 const loginUser = asyncHandler(async (req,res) =>{
@@ -75,9 +73,8 @@ const logoutUser =  asyncHandler((req,res) =>{
         expires:new Date(Date.now()),
     })
 
-    res.status(200).json({
-        message:"User Logged Out successfully",
-    })
+    res.status(200).json(new ApiResponse(200,"User Logged Out successfully"));
+
 })
 
 const forgotPassword = asyncHandler(async (req,res) =>{

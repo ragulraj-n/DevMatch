@@ -19,13 +19,13 @@ const appRateLimiter = createRateLimiter({
 });
 
 app.use(appRateLimiter);
-app.use("/auth",authRouter);
-app.use("/user",userRouter);
-app.use("/",connectionRouter);
-app.use("/feed",feedRouter); 
-app.use("/search",searchRouter);
+app.use("/api/auth",authRouter);
+app.use("/api/user",userRouter);
+app.use("/api/",connectionRouter);
+app.use("/api/feed",feedRouter); 
+app.use("/api/search",searchRouter);
 
-app.use("/",errorHandler);
+app.use(errorHandler);
 
 
 connectDB().then(()=>{

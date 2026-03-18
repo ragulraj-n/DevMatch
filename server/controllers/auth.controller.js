@@ -84,7 +84,7 @@ const forgotPassword = asyncHandler(async (req,res) =>{
 
         const user = await User.findOne({email});
         if(!user) 
-            return res.status(200).json(new ApiResponse(200,"If the email exists, reset link will be sent",token));
+            return res.status(200).json(new ApiResponse(200,"If the email exists, reset link will be sent"));
 
         const token = jwt.sign({id: user._id },JWT_PRIVATE_KEY,{ expiresIn: "15m"});
 
@@ -133,7 +133,7 @@ const forgotPassword = asyncHandler(async (req,res) =>{
             </html>`
         }
 
-        // await sendEmail(email,"Reset Your DevMatch Password",`Reset Your DevMatch Password Click the Link: ${resetLink}`,htmpTemplate(resetLink));
+         await sendEmail(email,"Reset Your DevMatch Password",`Reset Your DevMatch Password Click the Link: ${resetLink}`,htmpTemplate(resetLink));
         res.status(200).json(new ApiResponse(200,"If the email exists, reset link will be sent",token));
 })
 

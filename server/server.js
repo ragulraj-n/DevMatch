@@ -8,8 +8,17 @@ const feedRouter = require("./routes/feed.routes");
 const searchRouter = require("./routes/search.routes");
 const createRateLimiter = require("./utils/createRateLimiter");
 const errorHandler = require("./middlewares/errorHandler")
+const cors = require('cors');
+const { FRONTEND_URL } = require("./config/constant");
 
 const app = express();
+
+app.use(cors({
+    origin: FRONTEND_URL,
+    methods: ['GET', 'POST','PATCH', 'PUT', 'DELETE'],
+    credentials:true,
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 

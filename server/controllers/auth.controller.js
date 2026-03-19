@@ -67,7 +67,7 @@ const loginUser = asyncHandler(async (req,res) =>{
         });
 
         user.password = undefined;
-        res.status(200).json(new ApiResponse(200,"User Logged In successfully",{user,token}));
+        res.status(200).json(new ApiResponse(200,"User Logged In successfully",user));
 })
 
 const logoutUser =  asyncHandler((req,res) =>{

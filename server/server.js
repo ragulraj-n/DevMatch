@@ -12,7 +12,6 @@ const cors = require('cors');
 const { FRONTEND_URL } = require("./config/constant");
 
 const app = express();
-
 app.use(cors({
     origin: FRONTEND_URL,
     methods: ['GET', 'POST','PATCH', 'PUT', 'DELETE'],

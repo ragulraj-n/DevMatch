@@ -1,5 +1,5 @@
 import React from 'react'
-import Login from './components/auth/pages/Login'
+import Login from './features/auth/pages/Login'
 
 const App = () => {
   return (

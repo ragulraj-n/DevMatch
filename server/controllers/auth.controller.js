@@ -61,11 +61,13 @@ const loginUser = asyncHandler(async (req,res) =>{
 
         res.cookie("token",token,{
             httpOnly:true,
-            sameSite:"strict",
+            sameSite: "lax",
+            secure:false,
+            path: "/",
         });
 
         user.password = undefined;
-        res.status(200).json(new ApiResponse(200,"User Logged In successfully",user));
+        res.status(200).json(new ApiResponse(200,"User Logged In successfully",{user,token}));
 })
 
 const logoutUser =  asyncHandler((req,res) =>{

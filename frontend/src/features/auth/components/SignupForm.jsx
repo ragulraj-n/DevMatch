@@ -1,6 +1,7 @@
 import React, { use, useState } from 'react'
 import { validateConfirmPassword, validateEmail, validateFirstName, validateLastName, validatePassword } from '../validations/registerValidation';
 import {signupApi } from '../services/authApi';
+import toast from 'react-hot-toast';
 
 const RegisterForm = () => {
     const inputField = 'border p-1 pl-2';
@@ -14,7 +15,6 @@ const RegisterForm = () => {
     const [error,setError] = useState({});
 
     const handleRegister = async () =>{
-        try{
             const newError = {};
             newError.firstName = validateFirstName(firstName);
             newError.lastName = validateLastName(lastName);
@@ -29,6 +29,8 @@ const RegisterForm = () => {
             }
 
             setError(newError);
+        const toastId = toast.loading("User Account Creating...")
+        try{
             const res = await signupApi({
                 firstName,
                 lastName,
@@ -36,11 +38,12 @@ const RegisterForm = () => {
                 password
             }) 
             console.log(res);
+            toast.success("Account Created Successfully",{id: toastId});
         }catch(err){
-            console.log(err);
+            const message = err.response?.data?.message || 'SignUp failed';
+            toast.error(message,{id: toastId});
             console.log("Data:", err.response?.data);
             console.log("Status:", err.response?.status);
-            console.log("Message:", err.response?.data?.message);
         }
     }
 
@@ -50,7 +53,6 @@ const RegisterForm = () => {
         
         <div className="flex flex-col gap-5">
 
-            {/* First + Last Name */}
             <div className="flex flex-col md:flex-row gap-4">
             
             <div className="flex flex-col w-full">
@@ -79,7 +81,6 @@ const RegisterForm = () => {
 
             </div>
 
-            {/* Email */}
             <div className="flex flex-col">
             <label className={inputLabel}>Email</label>
             <input
@@ -92,7 +93,6 @@ const RegisterForm = () => {
             )}
             </div>
 
-            {/* Password */}
             <div className="flex flex-col">
             <label className={inputLabel}>Password</label>
             <input
@@ -106,7 +106,6 @@ const RegisterForm = () => {
             )}
             </div>
 
-            {/* Confirm Password */}
             <div className="flex flex-col">
             <label className={inputLabel}>Confirm password</label>
             <input
@@ -120,7 +119,6 @@ const RegisterForm = () => {
             )}
             </div>
 
-            {/* Button */}
             <button
             className="bg-gray-600 hover:bg-gray-700 text-white w-full md:w-1/2 mx-auto py-2 rounded-md transition"
             onClick={handleRegister}

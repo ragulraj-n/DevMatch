@@ -1,13 +1,16 @@
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import { validateConfirmPassword, validateEmail, validateFirstName, validateLastName, validatePassword } from '../validations/registerValidation';
 import {signupApi } from '../services/authApi';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../../user/userSlice';
 
 const SignupForm = () => {
     const inputField = 'border p-1 pl-2';
     const inputLabel = 'font-semibold'
-
+    
+    const dispatch = useDispatch();
     const [firstName,setFirstName] = useState("");
     const [lastName,setLastName] = useState("");
     const [email,setEmail] = useState("");
@@ -38,7 +41,7 @@ const SignupForm = () => {
                 email,
                 password
             }) 
-            console.log(res);
+            dispatch(addUser(res?.data?.data));
             toast.success("Account Created Successfully",{id: toastId});
         }catch(err){
             const message = err.response?.data?.message || 'SignUp failed';

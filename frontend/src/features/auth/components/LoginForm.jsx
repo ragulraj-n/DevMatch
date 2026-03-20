@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { loginApi } from '../services/authApi';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addUser } from '../../user/userSlice';
 
 
 const LoginForm = () => {
-
+    const dispatch = useDispatch();
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [error,setError] = useState({});
@@ -24,7 +26,8 @@ const LoginForm = () => {
             email,
             password
           });
-          console.log(res);
+          dispatch(addUser(res?.data?.data));
+
           setError({});
         }catch(err){
           console.log(err);

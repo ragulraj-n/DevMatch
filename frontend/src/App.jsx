@@ -1,14 +1,14 @@
 import React from 'react'
-import Login from './features/auth/pages/Login'
-import Register from './features/auth/pages/Signup'
 import {Toaster} from 'react-hot-toast'
-
+import AppRoutes from './routes/appRoutes'
+import {BrowserRouter} from 'react-router-dom'
 const App = () => {
   return (
     <div>
         <Toaster position="bottom-right" reverseOrder={false} />
-        {/* <Login /> */}
-        <Register />
+        <BrowserRouter>
+            <AppRoutes />
+        </BrowserRouter>
     </div>
   )
 }

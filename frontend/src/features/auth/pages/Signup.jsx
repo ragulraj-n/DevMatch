@@ -1,12 +1,12 @@
 import React from 'react'
-import RegisterForm from '../components/SignupForm'
+import SignupForm from '../components/SignupForm'
 
-const Register = () => {
+const Signup = () => {
   return (
     <div>
-      <RegisterForm />
+      <SignupForm />
     </div>
   )
 }
 
-export default Register
+export default Signup;

@@ -3,7 +3,7 @@ import { validateConfirmPassword, validateEmail, validateFirstName, validateLast
 import {signupApi } from '../services/authApi';
 import toast from 'react-hot-toast';
 
-const RegisterForm = () => {
+const SignupForm = () => {
     const inputField = 'border p-1 pl-2';
     const inputLabel = 'font-semibold'
 
@@ -133,4 +133,4 @@ const RegisterForm = () => {
 
 }
 
-export default RegisterForm
+export default SignupForm;

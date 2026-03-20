@@ -38,8 +38,10 @@ const registerUser = asyncHandler(async (req,res) => {
     const token = jwt.sign({userId:user._id},JWT_PRIVATE_KEY);
 
     res.cookie("token",token,{
-        sameSite:"strict",
-        httpOnly:true,
+            httpOnly:true,
+            sameSite: "lax",
+            secure:false,
+            path: "/",
     });
 
     res.status(201).json(new ApiResponse(201,"User created successfully",user))

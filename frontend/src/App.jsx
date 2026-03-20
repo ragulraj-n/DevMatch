@@ -2,13 +2,18 @@ import React from 'react'
 import {Toaster} from 'react-hot-toast'
 import AppRoutes from './routes/appRoutes'
 import {BrowserRouter} from 'react-router-dom'
+import {Provider} from 'react-redux'
+import appStore from './app/appStore'
+
 const App = () => {
   return (
     <div>
         <Toaster position="bottom-right" reverseOrder={false} />
-        <BrowserRouter>
-            <AppRoutes />
-        </BrowserRouter>
+        <Provider store={appStore}>
+          <BrowserRouter>
+              <AppRoutes />
+          </BrowserRouter>
+        </Provider>
     </div>
   )
 }

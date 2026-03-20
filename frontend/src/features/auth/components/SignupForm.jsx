@@ -2,6 +2,7 @@ import React, { use, useState } from 'react'
 import { validateConfirmPassword, validateEmail, validateFirstName, validateLastName, validatePassword } from '../validations/registerValidation';
 import {signupApi } from '../services/authApi';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 const SignupForm = () => {
     const inputField = 'border p-1 pl-2';
@@ -125,7 +126,7 @@ const SignupForm = () => {
             >
             Register
             </button>
-
+            <p className='mx-auto '>Already having account? <Link to="/login" className='font-semibold'>Click here to login</Link></p>
         </div>
         </div>
     </div>

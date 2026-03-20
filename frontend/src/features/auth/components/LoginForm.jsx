@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { loginApi } from '../services/authApi';
+import { Link } from 'react-router-dom';
 
 
 const LoginForm = () => {
@@ -54,7 +55,7 @@ const LoginForm = () => {
                 <button className='border bg-gray-500 w-[40%]  mx-auto h-9 rounded-xl'
                 onClick={handleLogin}>
                 Login</button>
-                <p className='mx-auto'>New to DevMatch? Create new account</p>
+                <p className='mx-auto'>New to DevMatch? <Link to="/signup" className='font-semibold'>Create new account</Link></p>
             </div>
        </div>
     </div>

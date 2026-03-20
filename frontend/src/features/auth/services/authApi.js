@@ -8,3 +8,12 @@ export const loginApi = async (data) =>{
         console.log(err);
     }
 }
+
+export const signupApi = async (data)=>{
+    try{
+        const res = await axiosApi.post("/auth/signup",data);
+        return res;
+    }catch(err){
+        throw err;
+    }
+}

@@ -46,7 +46,7 @@ axiosApi.interceptors.response.use(
           console.log("Other error:", status);
       }
     }
-
+    console.log(error);
     return Promise.reject(error);
   }
 );

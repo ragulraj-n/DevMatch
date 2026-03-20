@@ -1,5 +1,6 @@
 import React, { use, useState } from 'react'
 import { validateConfirmPassword, validateEmail, validateFirstName, validateLastName, validatePassword } from '../validations/registerValidation';
+import {signupApi } from '../services/authApi';
 
 const RegisterForm = () => {
     const inputField = 'border p-1 pl-2';
@@ -12,22 +13,35 @@ const RegisterForm = () => {
     const [confirmPassword,setConfirmPassword] = useState("");
     const [error,setError] = useState({});
 
-    const handleRegister = () =>{
-        const newError = {};
-        newError.firstName = validateFirstName(firstName);
-        newError.lastName = validateLastName(lastName);
-        newError.email = validateEmail(email);
-        newError.password = validatePassword(password);
-        newError.confirmPassword = validateConfirmPassword(password,confirmPassword);
-        const hasError = Object.values(newError).some(err => err);
+    const handleRegister = async () =>{
+        try{
+            const newError = {};
+            newError.firstName = validateFirstName(firstName);
+            newError.lastName = validateLastName(lastName);
+            newError.email = validateEmail(email);
+            newError.password = validatePassword(password);
+            newError.confirmPassword = validateConfirmPassword(password,confirmPassword);
+            const hasError = Object.values(newError).some(err => err);
 
-        if(hasError){
+            if(hasError){
+                setError(newError);
+                return;
+            }
+
             setError(newError);
-            return;
+            const res = await signupApi({
+                firstName,
+                lastName,
+                email,
+                password
+            }) 
+            console.log(res);
+        }catch(err){
+            console.log(err);
+            console.log("Data:", err.response?.data);
+            console.log("Status:", err.response?.status);
+            console.log("Message:", err.response?.data?.message);
         }
-
-        setError(newError);
-        console.log("register user")
     }
 
     return (

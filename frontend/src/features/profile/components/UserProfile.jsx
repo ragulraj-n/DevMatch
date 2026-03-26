@@ -37,16 +37,16 @@ const UserProfile = () => {
           </p>
           <div className="h-0.5 bg-blue-600 w-full"/>
           <h2 className="text-[22px] font-bold text-black">Skills</h2>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {
-              ["React.js","Node.js","Express.js","MongoDB","C++","TailwindCSS"].map(e =>
+              ["React.js","Node.js","Express.js","MongoDB","C++","TailwindCSS","React.js","Node.js","Express.js","MongoDB","C++","TailwindCSS"].map(e =>
                 <p className="border rounded-lg px-3 py-1 bg-gray-300 text-black font-medium text-[16px]">{e}</p>
               )
             }
           </div>
           <div className="h-0.5 mt-3 bg-blue-600 w-full"/>
           <h2 className="text-[22px] font-bold text-black">Interests</h2>
-           <div className="flex gap-2">
+           <div className="flex gap-2 flex-wrap">
             {
               ["Web Development","Open Source","FinTech","App Development"].map(e =>
                 <p className="border rounded-lg px-4 py-1 bg-gray-300 text-black font-medium text-[16px]">{e}</p>
@@ -63,6 +63,16 @@ const UserProfile = () => {
            <div className="w-3/5 h-30">
              <h2 className="text-2xl font-bold mb-2">DevMatch</h2>
              <p className="line-clamp-4">It is a web application which helps developer to connect with another developer to build something coolIt is a web application which helps developer to connect with another developer to build something coolIt is a web application which helps developer to connect with another developer to build something coolIt is a web application which helps developer to connect with another developer to build something cool</p>
+             <div className="flex gap-2 mt-2">
+              <p className="font-bold border bg-blue-800 text-white rounded-md w-32 py-1 px-2 flex">Tech Stack<GrFormNextLink size={25} /></p>
+              <div className="flex gap-2 flex-wrap">
+                {
+                  ["React.js","Node.js","Express.js","MongoDB","C++"].map(e =>
+                    <p className="border rounded-lg px-3 py-1 bg-gray-300 text-black font-medium text-[16px]">{e}</p>
+                  )
+                }
+             </div>
+             </div>
            </div>
            <div className="flex flex-col mx-auto gap-6 items-center mt-5">
               <p className="flex items-center border rounded-full py-1 px-3 bg-blue-700 text-black font-semibold cursor-pointer">Source Code<DiGithubBadge size={35} /></p>

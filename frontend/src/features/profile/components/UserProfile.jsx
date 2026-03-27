@@ -4,6 +4,7 @@ import { TbWorld } from "react-icons/tb";
 import { FaLinkedin, FaLink} from "react-icons/fa";
 import { FaUserPlus } from "react-icons/fa6";
 import DisplayProject from "./DisplayProject";
+import { DEFAULT_PROFILE_IMG } from "../constant";
 
 
 const UserProfile = () => {
@@ -12,7 +13,7 @@ const UserProfile = () => {
     <div className="flex flex-col min-h-screen h-screen">
       <div className="w-4/5 bg-gray-400 mx-auto mt-16 rounded-3xl pb-10 flex">
         <div className="w-[28%] pl-14">
-          <img className="w-52 mt-10 border-4 border-blue-700 rounded-full" src="https://api.dicebear.com/7.x/avataaars/svg?seed=alex_dev&backgroundColor=0f172a&hairColor=2c1e0f&topChance=80&accessoriesChance=30&clothingColor=3b82f6" />
+          <img className="w-52 mt-10 border-4 border-blue-700 rounded-full" src={DEFAULT_PROFILE_IMG} />
           <div className="flex flex-col gap-5 mt-5 items-start">
             <div className="flex gap-2 justify-center items-center">
               <p className="flex h-8items-center border py-1 px-2 rounded-3xl bg-blue-400 font-semibold text-black text-[15px] gap-1"><DiCode size={25} />Senior Dev</p> 

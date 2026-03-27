@@ -42,11 +42,17 @@ const userSchema = mongoose.Schema({
     },
     bio:{
         type:String,
-        maxlenght: 300,
+        maxlenght: 500,
     },
     profileImage:{
-        type:String,
-        default:"https://i.ibb.co/NnCS39LF/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission.jpg",
+        imageUrl:{
+            type:String,
+            default:"",
+        },
+        publicId: {
+            type: String,
+            default: "",
+        },
     },
     location:String,
     experienceLevel:{
@@ -67,6 +73,7 @@ const userSchema = mongoose.Schema({
     skills:{
         type:[String],
         default:[],
+        
     },
     interests:{
         type:[String],

@@ -10,6 +10,7 @@ const createRateLimiter = require("./utils/createRateLimiter");
 const errorHandler = require("./middlewares/errorHandler")
 const cors = require('cors');
 const { FRONTEND_URL } = require("./config/constant");
+const AdditionalRouter = require("./routes/helper.routes");
 
 const app = express();
 app.use(cors({
@@ -32,7 +33,7 @@ app.use("/api/user",userRouter);
 app.use("/api/",connectionRouter);
 app.use("/api/feed",feedRouter); 
 app.use("/api/search",searchRouter);
-
+app.use("/",AdditionalRouter)
 app.use(errorHandler);
 
 

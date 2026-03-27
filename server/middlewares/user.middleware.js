@@ -41,8 +41,8 @@ const validateEditProfile = [
     .optional()
     .isString().withMessage("Bio must be a string")
     .trim()
-    .isLength({ max: 300 })
-    .withMessage("Bio must be less than 300 characters"),
+    .isLength({ max: 500 })
+    .withMessage("Bio must be less than 500 characters"),
 
   body("profileImage")
     .optional()

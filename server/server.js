@@ -33,7 +33,7 @@ app.use("/api/user",userRouter);
 app.use("/api/",connectionRouter);
 app.use("/api/feed",feedRouter); 
 app.use("/api/search",searchRouter);
-app.use("/",AdditionalRouter)
+app.use("/api",AdditionalRouter)
 app.use(errorHandler);
 
 

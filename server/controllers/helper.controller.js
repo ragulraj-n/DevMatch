@@ -1,6 +1,6 @@
 const asyncHandler = require("../utils/AsyncHandler");
 const ApiError = require("../utils/ApiError");
-const cloudinary = require("../config/cloudinary");
+const cloudinary = require("../utils/uploadImage");
 const ApiResponse = require("../utils/ApiResponse");
 
 const uploadImage = asyncHandler(async (req, res) => {
@@ -11,7 +11,7 @@ const uploadImage = asyncHandler(async (req, res) => {
   }
 
   if (!file.mimetype.startsWith("image")) {
-    throw new ApiError(400, "INVALID_FILE_TYPE", "Only image files allowed");
+    throw new ApiError(404, "INVALID_FILE_TYPE", "Only image files allowed");
   }
   const user = req.user;
   const userId = user._id;

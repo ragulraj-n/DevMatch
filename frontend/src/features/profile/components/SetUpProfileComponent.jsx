@@ -7,9 +7,13 @@ const SetUpProfileComponent = () => {
         bio:"",
         location:"",
         skills:[],
+        interests:[],
+        experienceLevel:"",
+        availabilityStatus:"",
     })
 
     const [currSkill,setCurrSkill] = useState("");
+    const [currInterest,setCurrInterest] = useState("");
 
     const handleUserSkill = (e) =>{
         setCurrSkill(e.target.value);
@@ -24,6 +28,23 @@ const SetUpProfileComponent = () => {
             setUserData((prev)=>({
                 ...prev,
                 skills:prev.skills.slice(0,-1),
+            }));
+        }
+    }
+
+    const handleUserInterests = (e) =>{
+        setCurrInterest(e.target.value);
+    }
+
+    const handleUserInterestsKeyDown = (e) =>{
+        if(e.key === "Enter" && currInterest.trim()!==""){
+            setUserData((prev)=>({...prev,
+                interests:[...prev.interests,currInterest]}));
+            setCurrInterest("");
+        }else if(e.key == "Backspace" && currInterest===""){
+            setUserData((prev)=>({
+                ...prev,
+                interests:prev.interests.slice(0,-1),
             }));
         }
     }
@@ -44,12 +65,12 @@ const SetUpProfileComponent = () => {
             <textarea className="border-2 h-32 px-2 py-1 focus:border-blue-500 focus:outline-none bg-gray-100 rouned-sm"/>
         </div>
         <div className="flex flex-col justify-center">
-             <lable className="text-md font-bold">Location</lable>
+             <label className="text-md font-bold">Location</label>
              <input className="border-2 w-1/3 h-10 px-2 py-1 focus:border-blue-500 focus:outline-none bg-gray-200 rounded-sm" />
         </div>
         <div className="flex items-center">
             <div className="flex flex-col w-1/2 ">
-                <lable className="text-md font-bold">Experience Level</lable>
+                <label className="text-md font-bold">Experience Level</label>
                 <select className="border-2 w-2/3 h-10 px-2 py-1 focus:border-blue-500 focus:outline-none bg-gray-200 rounded-sm">
                 <option value="">--Choose--</option>
                 <option value="student">Student</option>
@@ -60,7 +81,7 @@ const SetUpProfileComponent = () => {
                 </select>
             </div>
             <div className="flex flex-col w-1/2">
-                <lable className="text-md font-bold">Availability Status</lable>
+                <label className="text-md font-bold">Availability Status</label>
                 <select className="border-2 w-2/3 h-10 px-2 py-1 focus:border-blue-500 focus:outline-none bg-gray-200 rounded-sm">
                 <option value="">--Choose--</option>
                 <option value="available">Available</option>
@@ -69,19 +90,30 @@ const SetUpProfileComponent = () => {
                 </select>
             </div>
         </div>
-        <div className="">
-            <lable className="text-md font-bold">Skills</lable>
-            <div className="flex pl-10 items-center justify-start flex-wrap">
+        <div>
+            <label className="text-md font-bold">Skills</label>
+            <div className="flex pl-10 items-center justify-start flex-wrap w-4/5">
                 {
                     userData.skills.map((e)=>{
                        return <p className="border border-blue-600 bg-gray-100 py-0.5 px-3 shadow-md mr-2 rounded-full mt-2">{e}</p>
                     })
              }
-             <input className="border-none focus:outline-none mt-2" onChange={(e)=>handleUserSkill(e)} value={currSkill} onKeyDown={(e)=>handleUserSkillKeyAction(e)}/>
+             <input className="focus:outline-none mt-2 w-full border-none" onChange={(e)=>handleUserSkill(e)} value={currSkill} onKeyDown={(e)=>handleUserSkillKeyAction(e)} placeholder="Enter Your Skills Eg:- React.js, Express.js"/>
             </div>
-
             <div className="h-0.5 w-4/5 bg-blue-400 mt-2"></div>
         </div>
+        <div>
+            <label className="text-md font-bold">Interests</label>
+            <div className="flex pl-10 items-center justify-start flex-wrap w-4/5">
+                {
+                    userData.interests.map((e)=>{
+                       return <p className="border border-blue-600 bg-gray-100 py-0.5 px-3 shadow-md mr-2 rounded-full mt-2">{e}</p>
+                    })
+             }
+             <input className="border-none focus:outline-none mt-2 w-full" onChange={(e)=>handleUserInterests(e)} value={currInterest} onKeyDown={(e)=>handleUserInterestsKeyDown(e)} placeholder="Enter Your Interests Eg:- Web Development, Open Source"/>
+            </div>
+            <div className="h-0.5 w-4/5 bg-blue-400 mt-2"></div>
+        </div>  
        </div>
     </div>
   )

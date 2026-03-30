@@ -2,6 +2,42 @@ import React, { useState } from 'react'
 
 const SetUpProjectComponent = () => {
 
+    const [projectData,setProjectData] = useState({
+        title:"",
+        description:"",
+        githubLink:"",
+        liveLink:"",
+        techStack:[]
+    });
+
+    const [currTechStack,setCurrTechStack] = useState("");
+
+    const handleChange = (field,e) =>{
+        setProjectData({...projectData,
+            [field]:e.target.value,
+        });
+    }
+
+    const handleTechStack = (e) =>{
+        setCurrTechStack(e.target.value);
+    }
+
+    const handleTechStackKey = (e) =>{
+        if(e.key === "Enter" && currTechStack.trim() !== ""){
+            setProjectData((prev)=>({
+                ...prev,
+                techStack:[...prev.techStack,currTechStack.trim()],
+            }));
+            setCurrTechStack("");
+        }
+        if(currTechStack === "" && e.key === "Backspace"){
+            setProjectData((prev)=>({
+                ...prev,
+                techStack:prev.techStack.slice(0,-1),
+            }))
+        }
+    }
+
   return (
     <div className='w-full flex flex-col mt-6 px-4 items-center pb-20'>
       
@@ -17,6 +53,8 @@ const SetUpProjectComponent = () => {
           <input 
             className='w-full border-b-2 border-blue-600 focus:outline-none py-2 px-1'
             placeholder='Enter project title'
+            onChange={(e)=>handleChange("title",e)}
+            value={projectData.title}
           />
         </div>
 
@@ -24,10 +62,13 @@ const SetUpProjectComponent = () => {
           <label className="font-bold text-lg mb-2 w-full">
             Description
           </label>
-        <textarea className="w-full border-2 h-32 px-3 py-2 focus:border-blue-500 focus:outline-none bg-gray-100 rounded-md resize-none"
-            placeholder="Describe the project shortly " />
+        <textarea 
+            className="w-full border-2 h-32 px-3 py-2 focus:border-blue-500 focus:outline-none bg-gray-100  rounded-md resize-none"
+            placeholder="Describe the project shortly"
+            onChange={(e)=>handleChange("description",e)}
+            value={projectData.description} />
         <p className="w-full text-right text-sm text-gray-500 mt-1">
-            /500 chars
+           {projectData.description.length}/500 chars
         </p>
         </div>
         <div className="flex flex-col items-center w-full">
@@ -37,6 +78,8 @@ const SetUpProjectComponent = () => {
             <input 
                 className='w-full border-b-2 border-blue-600 focus:outline-none py-2 px-1'
                 placeholder='https://github.com/ragulraj-n/DevMatch'
+                onChange={(e)=>handleChange("githubLink",e)}
+                value={projectData.githubLink}
             />
         </div>
         <div className="flex flex-col items-center w-full">
@@ -46,16 +89,21 @@ const SetUpProjectComponent = () => {
             <input 
                 className='w-full border-b-2 border-blue-600 focus:outline-none py-2 px-1'
                 placeholder='https://devmatch.com'
+                onChange={(e)=>handleChange("liveLink",e)}
+                value={projectData.liveLink}
             />
         </div>
         <div className='flex flex-col mt-3'>
             <div className='flex items-center gap-5'>
                 <label className='font-bold text-lg'>Tech Stacks</label>
-                <input className='border-2 h-10 pl-2 w-1/4 py-1 rounded-md focus:outline-blue-600 bg-gray-50' />
+                <input className='border-2 h-10 pl-2 w-1/4 py-1 rounded-md focus:outline-blue-600 bg-gray-50'
+                value={currTechStack}
+                onChange={handleTechStack}
+                onKeyDown={handleTechStackKey}/>
             </div>
             <div className='flex flex-wrap gap-3 mt-6'>
                 {
-                    ["React.js","Node.js","MongoDB"].map((d)=><p className='border px-3 py-1 bg-gray-200 rounded-lg font-semibold'>
+                    projectData.techStack.map((index)=>(d)=><p key={index} className='border px-3 py-1 bg-gray-200 rounded-lg font-semibold'>
                         {d}
                     </p>)
                 }

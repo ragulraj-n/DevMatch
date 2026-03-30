@@ -71,7 +71,7 @@
         }
 
     return (
-        <div className="w-4/5 mx-auto flex flex-col items-center mt-4 border shadow-md gap-5">
+        <div className="w-full mx-auto flex flex-col items-center mt-4 gap-5">
             <div className="flex pt-5 flex-col items-center w-full relative">
                 <img src={previewImage || userData.profileImage || DEFAULT_PROFILE_IMG} className="w-[200px] h-[200px] rounded-full object-cover"/>
                 <button className="absolute top-48 left-[53%] border bg-blue-700 flex p-2 rounded-full h-12 w-12 items-center justify-center" onClick={()=>setIsOpenUpload(true)}><MdEdit color="white" size={25}/></button>

@@ -1,4 +1,5 @@
 import axiosApi from '../../../services/axiosApi'
+import { useSelector } from 'react-redux';
 
 export const uploadImage = async (data) =>{
     try{
@@ -11,3 +12,14 @@ export const uploadImage = async (data) =>{
         console.log(err);
     }
 } 
+
+
+export const setUpProfileApi = async (userName,data) =>{
+    try{
+        const res = await axiosApi.patch(`/user/${userName}`,data);
+        return res;
+    }catch(err){
+        console.log(err);
+    }
+}
+

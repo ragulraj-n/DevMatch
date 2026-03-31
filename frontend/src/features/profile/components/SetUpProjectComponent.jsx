@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { FaArrowLeft } from "react-icons/fa";
 import { IoMdSkipForward } from "react-icons/io";
 
 const SetUpProjectComponent = ({setCurrentStep}) => {
@@ -112,10 +111,7 @@ const SetUpProjectComponent = ({setCurrentStep}) => {
                 )
                 }
             </div>
-             <div className="flex justify-between mt-10">
-                <button className="border bg-gray-600 text-white font-bold px-3 py-1 text-lg rounded-md flex  items-center gap-2"
-                onClick={()=>setCurrentStep()}><FaArrowLeft />Previous
-                </button>
+             <div className="flex justify-end mt-10">
                 <div className='flex gap-10 items-center justify-center'>
                     <button className="text-gray-500 font-bold px-3 py-1 text-lg rounded-md flex items-center gap-2">Skip<IoMdSkipForward />
                     </button>

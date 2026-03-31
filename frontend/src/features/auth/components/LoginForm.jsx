@@ -5,13 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../../user/userSlice';
 import { FaEyeSlash,FaEye } from "react-icons/fa";
 
-
 const LoginForm = () => {
     const dispatch = useDispatch();
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [error,setError] = useState({});
     const [isShowPassword,setIsShowPassword] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleLogin = async () =>{
         try{
@@ -29,6 +30,7 @@ const LoginForm = () => {
             password
           });
           dispatch(addUser(res?.data?.data));
+          navigate("/setup-profile");
           setError({});
         }catch(err){
           console.log(err);

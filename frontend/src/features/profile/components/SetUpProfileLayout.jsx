@@ -6,7 +6,7 @@ import StepTracker from './StepTracker ';
 const SetUpProfileLayout = () => {
      const [currentStep,setCurrentStep] = useState(1);
      return (
-          <div className="w-4/5 flex flex-col mx-auto items-center mt-4 border shadow-md">
+          <div className="w-4/5 flex flex-col mx-auto items-center mt-4 border shadow-xl">
                <StepTracker currentStep={currentStep}/>
                {currentStep===1 && <SetUpProfileComponent setCurrentStep={()=>setCurrentStep(2)}/>}
                {currentStep===2 && <SetUpProjectComponent setCurrentStep={()=>setCurrentStep(1)}/>}

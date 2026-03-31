@@ -42,6 +42,7 @@ const registerUser = asyncHandler(async (req,res) => {
             sameSite: "lax",
             secure:false,
             path: "/",
+            maxAge: 60 * 24 * 60 * 60 * 1000,
     });
 
     res.status(201).json(new ApiResponse(201,"User created successfully",user))
@@ -66,6 +67,7 @@ const loginUser = asyncHandler(async (req,res) =>{
             sameSite: "lax",
             secure:false,
             path: "/",
+            maxAge: 60 * 24 * 60 * 60 * 1000,
         });
 
         user.password = undefined;

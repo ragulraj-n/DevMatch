@@ -44,7 +44,7 @@ const getUserProfile = asyncHandler(async (req,res) =>{
 const editUserProfile = asyncHandler(async (req,res) =>{
         const userNameParams = req.params.userName;
         const loggedInUser = req.user;
-
+        const {profileImage,...otherKeys} = req.body;
         if(!loggedInUser || userNameParams !== loggedInUser.userName) 
               throw new ApiError(403,"FORBIDDEN","can't edit another user profile");
 
@@ -53,8 +53,13 @@ const editUserProfile = asyncHandler(async (req,res) =>{
             if(existingUser && !existingUser._id.equals(loggedInUser._id))
                 throw new ApiError(409,"USERNAME_TAKEN","Username is already taken");
         }    
-
-        Object.keys(req.body).forEach(key => loggedInUser[key] = req.body[key]);
+        
+        if(profileImage){
+          loggedInUser.profileImage.imageUrl = profileImage;
+        }
+        
+        Object.keys(otherKeys).forEach(key => loggedInUser[key] = otherKeys[key]);
+        
         const user = await loggedInUser.save();
 
         res.status(200).json(new ApiResponse(200,"profile updated successfully",user));

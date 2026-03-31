@@ -5,7 +5,7 @@
     import { DEFAULT_PROFILE_IMG } from "../constant";
     import { uploadImage } from "../services/profileApi";
 
-    const SetUpProfileComponent = () => {
+    const SetUpProfileComponent = ({setCurrentStep}) => {
 
         const [userData,setUserData] = useState({
             bio:"",
@@ -161,7 +161,8 @@
                 <div className="h-0.5 w-4/5 bg-blue-400 mt-2"></div>
             </div>  
             <div className="flex justify-end mt-10">
-                <button className="border bg-blue-600 text-white font-bold px-3 py-1 text-lg rounded-md flex  items-center gap-2">Next<FaArrowRight />
+                <button className="border bg-blue-600 text-white font-bold px-3 py-1 text-lg rounded-md flex  items-center gap-2"
+                onClick={()=>setCurrentStep()}>Next<FaArrowRight />
                 </button>
             </div>
         </div>

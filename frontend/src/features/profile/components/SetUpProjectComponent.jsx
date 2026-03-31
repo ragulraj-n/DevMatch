@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { FaArrowLeft } from "react-icons/fa";
+import { IoMdSkipForward } from "react-icons/io";
 
 const SetUpProjectComponent = () => {
 
@@ -100,13 +102,25 @@ const SetUpProjectComponent = () => {
                 value={currTechStack}
                 onChange={handleTechStack}
                 onKeyDown={handleTechStackKey}/>
+                <p>{projectData.techStack.length}/6</p>
             </div>
             <div className='flex flex-wrap gap-3 mt-6'>
                 {
-                    projectData.techStack.map((index)=>(d)=><p key={index} className='border px-3 py-1 bg-gray-200 rounded-lg font-semibold'>
+                   projectData.techStack.map((d,index)=><p key={index} className='border px-3 py-1 bg-gray-200 rounded-lg font-semibold'>
                         {d}
-                    </p>)
+                    </p>
+                )
                 }
+            </div>
+             <div className="flex justify-between mt-10">
+                <button className="border bg-gray-600 text-white font-bold px-3 py-1 text-lg rounded-md flex  items-center gap-2"><FaArrowLeft />Previous
+                </button>
+                <div className='flex gap-10 items-center justify-center'>
+                    <button className="text-gray-500 font-bold px-3 py-1 text-lg rounded-md flex items-center gap-2">Skip<IoMdSkipForward />
+                    </button>
+                    <button className="border bg-blue-600 text-white font-bold px-3 py-1 text-lg rounded-md flex    items-center gap-2">SAVE
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -115,4 +129,4 @@ const SetUpProjectComponent = () => {
   )
 }
 
-export default SetUpProjectComponent
+export default SetUpProjectComponent;

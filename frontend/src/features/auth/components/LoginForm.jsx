@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { loginApi } from '../services/authApi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../../user/userSlice';
+import { FaEyeSlash,FaEye } from "react-icons/fa";
 
 
 const LoginForm = () => {
@@ -10,6 +11,7 @@ const LoginForm = () => {
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
     const [error,setError] = useState({});
+    const [isShowPassword,setIsShowPassword] = useState(false);
 
     const handleLogin = async () =>{
         try{
@@ -27,12 +29,13 @@ const LoginForm = () => {
             password
           });
           dispatch(addUser(res?.data?.data));
-
           setError({});
         }catch(err){
           console.log(err);
         }
     }
+
+     const handleShowPassword = () =>setIsShowPassword((prev)=>!prev);
 
   return (
     <div className='flex flex-col justify-center items-center h-screen'>
@@ -47,12 +50,16 @@ const LoginForm = () => {
                      placeholder='user@gmail.com'/>
                     {error.email && <p className='text-red-500'>{error.email}</p>}
                 </div>
-                <div className='flex flex-col'>
+                <div className='flex flex-col relative'>
                     <label className='font-semibold'>Enter Your Password</label>
                     <input className='border rounded-xs px-2 py-2' 
                     onChange={e => setPassword(e.target.value)}
                     value={password}
-                    type='password' />
+                    type={isShowPassword?'text':'password'} />
+                    {isShowPassword===false && <FaEyeSlash className='absolute top-8 right-5 cursor-pointer' 
+                    onClick={handleShowPassword} size={24}/>}
+                    {isShowPassword && <FaEye className='absolute top-8 right-5 cursor-pointer' 
+                    onClick={handleShowPassword} size={24}/>}
                     {error.password && <p className='text-red-500'>{error.password}</p>}
                 </div>
                 <button className='border bg-gray-500 w-[40%]  mx-auto h-9 rounded-xl'

@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { validateConfirmPassword, validateEmail, validateFirstName, validateLastName, validatePassword } from '../validations/registerValidation';
 import {signupApi } from '../services/authApi';
 import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { Link, replace, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../../user/userSlice';
+import { FaEyeSlash,FaEye } from "react-icons/fa";
 
 const SignupForm = () => {
     const inputField = 'border p-1 pl-2';
@@ -17,6 +18,10 @@ const SignupForm = () => {
     const [password,setPassword] = useState("");
     const [confirmPassword,setConfirmPassword] = useState("");
     const [error,setError] = useState({});
+    const [isShowPassword,setIsShowPassword] = useState(false);
+    const [isShowConfirmPassword,setIsShowConfirmPassword] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleRegister = async () =>{
             const newError = {};
@@ -26,7 +31,6 @@ const SignupForm = () => {
             newError.password = validatePassword(password);
             newError.confirmPassword = validateConfirmPassword(password,confirmPassword);
             const hasError = Object.values(newError).some(err => err);
-
             if(hasError){
                 setError(newError);
                 return;
@@ -42,6 +46,7 @@ const SignupForm = () => {
                 password
             }) 
             dispatch(addUser(res?.data?.data));
+            navigate("/setup-profile",{replace: true});
             toast.success("Account Created Successfully",{id: toastId});
         }catch(err){
             const message = err.response?.data?.message || 'SignUp failed';
@@ -50,6 +55,10 @@ const SignupForm = () => {
             console.log("Status:", err.response?.status);
         }
     }
+
+    const handleShowPassword = () => setIsShowPassword((prev)=> !prev);
+    const handleConfirmShowPassword = () => setIsShowConfirmPassword((prev)=> !prev);
+
 
     return (
     <div className="flex items-center justify-center min-h-screen px-4">
@@ -97,27 +106,35 @@ const SignupForm = () => {
             )}
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
             <label className={inputLabel}>Password</label>
             <input
                 className={inputField}
-                type="password"
+                type={isShowPassword?"text":"password"}
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
             />
+            {isShowPassword===false && <FaEyeSlash className='absolute top-8 right-5 cursor-pointer' 
+            onClick={handleShowPassword} size={24}/>}
+            {isShowPassword && <FaEye className='absolute top-8 right-5 cursor-pointer' 
+            onClick={handleShowPassword} size={24}/>}
             {error.password && (
                 <p className="text-red-500 text-sm">{error.password}</p>
             )}
             </div>
 
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
             <label className={inputLabel}>Confirm password</label>
             <input
                 className={inputField}
-                type="password"
+                type={isShowConfirmPassword?"text":"password"}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 value={confirmPassword}
             />
+            {isShowConfirmPassword===false && <FaEyeSlash className='absolute top-8 right-5 cursor-pointer' 
+            onClick={handleConfirmShowPassword} size={24}/>}
+            {isShowConfirmPassword && <FaEye className='absolute top-8 right-5 cursor-pointer' 
+            onClick={handleConfirmShowPassword} size={24}/>}
             {error.confirmPassword && (
                 <p className="text-red-500 text-sm">{error.confirmPassword}</p>
             )}

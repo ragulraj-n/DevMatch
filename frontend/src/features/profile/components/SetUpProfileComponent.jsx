@@ -20,6 +20,9 @@ const SetUpProfileComponent = ({setCurrentStep}) => {
         experienceLevel:"",
         availabilityStatus:"",
         profileImage:DEFAULT_PROFILE_IMG,
+        github:"",
+        linkedin:"",
+        portfolio:"",
     })
 
     const [currSkill,setCurrSkill] = useState("");
@@ -80,10 +83,11 @@ const SetUpProfileComponent = ({setCurrentStep}) => {
         try{
             const res = await setUpProfileApi(userName,userData);
             dispatch(addUser(res.data));
-            console.log(res.data);
+            setCurrentStep();
         }catch(err){
             console.log(err);
         }
+        
         
     }
 
@@ -184,7 +188,8 @@ return (
             <input 
                 className='w-full border-b-2 border-blue-600 focus:outline-none py-2 px-1'
                 placeholder='https://github.com/ragulraj-n'
-                />
+                value={userData.github}
+                onChange={(e)=>setUserData({...userData,github:e.target.value})}/>
         </div> 
         <div className="flex flex-col items-center w-full">
             <label className='font-bold text-lg w-full'>
@@ -193,15 +198,19 @@ return (
             <input 
                 className='w-full border-b-2 border-blue-600 focus:outline-none py-2 px-1'
                 placeholder='https://linkedin.com/ragulraj-n'
+                value={userData.linkedin}
+                onChange={(e)=>setUserData({...userData,linkedin:e.target.value})}
                 />
         </div> 
         <div className="flex flex-col items-center w-full">
             <label className='font-bold text-lg w-full'>
-                Portfoilo
+                Portfolio
             </label>
             <input 
                 className='w-full border-b-2 border-blue-600 focus:outline-none py-2 px-1'
                 placeholder='https://ragulraj.tech'
+                value={userData.portfolio}
+                onChange={(e)=>setUserData({...userData,portfolio:e.target.value})}
                 />
         </div> 
         <div className="flex justify-end mt-10">

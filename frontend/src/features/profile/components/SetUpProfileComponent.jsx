@@ -4,13 +4,14 @@ import { FaArrowRight } from "react-icons/fa";
 import { GiCancel } from "react-icons/gi";
 import { DEFAULT_PROFILE_IMG } from "../constant";
 import { setUpProfileApi, uploadImage } from "../services/profileApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../../user/userSlice";
 
 
 
 const SetUpProfileComponent = ({setCurrentStep}) => {
     const user = useSelector(state => state.user.currentUser);
-
+    const dispatch = useDispatch();
     const [userData,setUserData] = useState({
         bio:"",
         location:"",
@@ -18,7 +19,7 @@ const SetUpProfileComponent = ({setCurrentStep}) => {
         interests:[],
         experienceLevel:"",
         availabilityStatus:"",
-        profileImage:null,
+        profileImage:DEFAULT_PROFILE_IMG,
     })
 
     const [currSkill,setCurrSkill] = useState("");
@@ -78,7 +79,8 @@ const SetUpProfileComponent = ({setCurrentStep}) => {
             const userName = user.userName;
         try{
             const res = await setUpProfileApi(userName,userData);
-           // setCurrentStep();
+            dispatch(addUser(res.data));
+            console.log(res.data);
         }catch(err){
             console.log(err);
         }
@@ -88,7 +90,7 @@ const SetUpProfileComponent = ({setCurrentStep}) => {
 return (
     <div className="w-full mx-auto flex flex-col items-center mt-4 gap-5">
         <div className="flex pt-5 flex-col items-center w-full relative">
-            <img src={previewImage || userData.profileImage || DEFAULT_PROFILE_IMG} className="w-[200px] h-[200px] rounded-full object-cover"/>
+            <img src={previewImage || userData.profileImage} className="w-[200px] h-[200px] rounded-full object-cover"/>
             <button className="absolute top-48 left-[53%] border bg-blue-700 flex p-2 rounded-full h-12 w-12 items-center justify-center" onClick={()=>setIsOpenUpload(true)}><MdEdit color="white" size={25}/></button>
             {isOpenUpload && <div className="border w-3/5 bg-gray-200 mt-10 h-80 flex justify-center mx-auto items-center pl-10 rounded-md flex-col relative">
                 <button className="absolute top-2 right-2" onClick={()=>{
@@ -147,7 +149,7 @@ return (
                 <option value="">--Choose--</option>
                 <option value="available">Available</option>
                 <option value="busy">Busy</option>
-                <option value="openToCollab">Open To Collab</option>
+                <option value="open_to_collab">Open To Collab</option>
                 </select>
             </div>
         </div>

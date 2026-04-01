@@ -5,7 +5,7 @@ export const loginApi = async (data) =>{
         const res = await axiosApi.post("/auth/login",data);
         return res;
     }catch(err){
-        console.log(err);
+        throw err;
     }
 }
 

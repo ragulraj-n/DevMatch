@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../../user/userSlice';
 import { FaEyeSlash,FaEye } from "react-icons/fa";
+import toast from 'react-hot-toast';
 
 const LoginForm = () => {
     const dispatch = useDispatch();
@@ -29,11 +30,13 @@ const LoginForm = () => {
             email,
             password
           });
+          toast.success("User LogIn successfully");
           dispatch(addUser(res?.data?.data));
           navigate("/setup-profile");
           setError({});
         }catch(err){
-          console.log(err);
+          toast.error(err.response?.data?.message||"Login failed");
+          console.log(err.response?.data?.message||"Login failed");
         }
     }
 

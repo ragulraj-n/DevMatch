@@ -1,1 +1,1 @@
-export const DEFAULT_PROFILE_IMG = "https://api.dicebear.com/7.x/avataaars/svg?seed=alex_dev&backgroundColor=0f172a&hairColor=2c1e0f&topChance=80&accessoriesChance=30&clothingColor=3b82f6";
+export const DEFAULT_PROFILE_IMG = "https://i.ibb.co/SDWmWY7C/Screenshot-2026-04-01-101108.png";

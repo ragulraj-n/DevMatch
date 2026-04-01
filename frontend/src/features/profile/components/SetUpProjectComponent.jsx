@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { IoMdSkipForward } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { addProjectApi } from '../services/profileApi';
 
 const SetUpProjectComponent = ({setCurrentStep}) => {
-
+    const dispatch = useDispatch();
     const [projectData,setProjectData] = useState({
         title:"",
         description:"",
@@ -36,6 +38,15 @@ const SetUpProjectComponent = ({setCurrentStep}) => {
                 ...prev,
                 techStack:prev.techStack.slice(0,-1),
             }))
+        }
+    }
+
+    const handleSetUpProject = async () =>{
+        try{
+            const res = await addProjectApi(projectData);
+            console.log(res.data);
+        }catch(err){
+            console.log(err.response);
         }
     }
 
@@ -115,7 +126,8 @@ const SetUpProjectComponent = ({setCurrentStep}) => {
                 <div className='flex gap-10 items-center justify-center'>
                     <button className="text-gray-500 font-bold px-3 py-1 text-lg rounded-md flex items-center gap-2">Skip<IoMdSkipForward />
                     </button>
-                    <button className="border bg-blue-600 text-white font-bold px-3 py-1 text-lg rounded-md flex    items-center gap-2">SAVE
+                    <button className="border bg-blue-600 text-white font-bold px-3 py-1 text-lg rounded-md flex    items-center gap-2"
+                    onClick={handleSetUpProject}>SAVE
                     </button>
                 </div>
             </div>

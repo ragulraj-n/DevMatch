@@ -9,17 +9,24 @@ export const uploadImage = async (data) =>{
         return res;
     }
     catch(err){
-        console.log(err);
+        throw err;
     }
 } 
-
 
 export const setUpProfileApi = async (userName,data) =>{
     try{
         const res = await axiosApi.patch(`/user/${userName}`,data);
         return res;
     }catch(err){
-        console.log(err);
+        throw err;
     }
 }
 
+export const addProjectApi = async (data) =>{
+    try{
+        const res = await axiosApi.post('/user/project',data);
+        return res;
+    }catch(err){
+        throw err;
+    }
+}

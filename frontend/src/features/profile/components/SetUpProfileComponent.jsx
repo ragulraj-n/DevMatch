@@ -88,7 +88,6 @@ const SetUpProfileComponent = ({setCurrentStep}) => {
             console.log(err);
         }
         
-        
     }
 
 return (
@@ -110,7 +109,7 @@ return (
             </div>}
         </div>
     <div className="w-full flex flex-col justify-center items-center">
-            <h1 className="font-bold text-3xl text-blue-700">Welcome, Ragul</h1>
+            <h1 className="font-bold text-3xl text-blue-700">Welcome, {user?.name || "bro"}</h1>
             <p>Complete your profile to connect with developers who match your skills and interests.</p>
     </div>
     <div className="w-4/5 flex flex-col gap-6">

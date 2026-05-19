@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { IoMdSkipForward } from "react-icons/io";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector} from "react-redux";
 import { addProjectApi } from '../services/profileApi';
+import { addUser } from "../../user/userSlice";
+import { MdDelete } from "react-icons/md";
 
 const SetUpProjectComponent = ({setCurrentStep}) => {
     const dispatch = useDispatch();
@@ -33,21 +35,26 @@ const SetUpProjectComponent = ({setCurrentStep}) => {
             }));
             setCurrTechStack("");
         }
-        if(currTechStack === "" && e.key === "Backspace"){
-            setProjectData((prev)=>({
-                ...prev,
-                techStack:prev.techStack.slice(0,-1),
-            }))
-        }
     }
 
     const handleSetUpProject = async () =>{
         try{
             const res = await addProjectApi(projectData);
-            console.log(res.data);
+            dispatch(addUser(res?.data?.data));
         }catch(err){
-            console.log(err.response);
+            console.log(err);
         }
+    }
+
+    const handleTechStackDelete = (index) =>{
+        let techStack = [];
+        for(let i=0;i<projectData.techStack.length;i++){
+            if(i!=index) techStack.push(projectData.techStack[i]);
+        }
+        setProjectData((prev) =>({
+            ...prev,
+            techStack:techStack,
+        }));
     }
 
   return (
@@ -116,8 +123,9 @@ const SetUpProjectComponent = ({setCurrentStep}) => {
             </div>
             <div className='flex flex-wrap gap-3 mt-6'>
                 {
-                   projectData.techStack.map((d,index)=><p key={index} className='border px-3 py-1 bg-gray-200 rounded-lg font-semibold'>
-                        {d}
+                   projectData.techStack.map((d,index)=><p key={index} className='border px-3 py-1 bg-gray-200 rounded-lg font-semibold'><div className='flex gap-2 items-center'>
+                        {d} <MdDelete className=' cursor-pointer' onClick={()=>handleTechStackDelete(index)}/>
+</div>
                     </p>
                 )
                 }

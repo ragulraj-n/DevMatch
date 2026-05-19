@@ -1,32 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DiCode, DiGithubBadge} from "react-icons/di";
 import { TbWorld } from "react-icons/tb";
 import { FaLinkedin, FaLink} from "react-icons/fa";
 import { FaUserPlus } from "react-icons/fa6";
 import DisplayProject from "./DisplayProject";
 import { DEFAULT_PROFILE_IMG } from "../constant";
+import { getMyProfileApi } from "../services/profileApi";
 
 
 const UserProfile = () => {
+
+  const [user,setUser] = useState(null);
+
+  useEffect(()=>{
+      const fetchProfile = async () =>{
+          const tempuser = await getMyProfileApi(); 
+          console.log(tempuser);
+          setUser(tempuser);
+      }
+      fetchProfile();
+  },[]);
 
   return (
     <div className="flex flex-col min-h-screen h-screen">
       <div className="w-4/5 bg-gray-400 mx-auto mt-16 rounded-3xl pb-10 flex">
         <div className="w-[28%] pl-14">
-          <img className="w-52 mt-10 border-4 border-blue-700 rounded-full" src={DEFAULT_PROFILE_IMG} />
+          <img className="w-52 mt-10 border-4 border-blue-700 rounded-full" src={user?.profileImage?.imageUrl} />
           <div className="flex flex-col gap-5 mt-5 items-start">
             <div className="flex gap-2 justify-center items-center">
-              <p className="flex h-8items-center border py-1 px-2 rounded-3xl bg-blue-400 font-semibold text-black text-[15px] gap-1"><DiCode size={25} />Senior Dev</p> 
+              <p className="flex h-8items-center border py-1 px-2 rounded-3xl bg-blue-400 font-semibold text-black text-[15px] gap-1"><DiCode size={25} />{user?.experienceLevel}</p> 
               <p className="border h-9 py-1 px-2 rounded-3xl bg-blue-400 font-semibold text-black text-[15px] flex items-center gap-1"
-              ><TbWorld />Lets Collab</p>
+              ><TbWorld />{user?.availabilityStatus}</p>
             </div>
-            <h1 className="text-white font-bold text-[35px]">Ragul Raj</h1>
+            <h1 className="text-white font-bold text-[35px]">{user?.firstName +" "+ user?.lastName}</h1>
             <button className="border w-4/5 h-10 flex justify-center items-center gap-2 bg-blue-600 rounded-full text-white text-lg
             font-semibold"><FaUserPlus />Connect</button>
             <div className="w-full flex justify-start items-center gap-5">
-              <DiGithubBadge size={40} />
-              <FaLinkedin size={30}/>
-              <FaLink size={30}/>
+             <a href={user?.github} target="_blank"> <DiGithubBadge size={40} /> </a>
+              <a href={user?.linkedin} target="_blank"><FaLinkedin size={30}/></a>
+              <a href={user?.portfolio} target="_blank"><FaLink size={30}/></a>
 
             </div>
           </div>
@@ -34,13 +46,13 @@ const UserProfile = () => {
         <div className="w-[72%] flex flex-col gap-5 mt-10 pr-10">
           <h2 className="text-[22px] font-bold text-black">About</h2>
           <p className="text-white text-[17px] ">
-            Hello, I'm Ragul Raj passionate about building smart and scalable web & mobile applications. I've completed a full-stack development course and constantly explore new technologies to refine my skills. Focused on continuous learning, I aim to transition into the IT industry by 2027 and eventually move towards AI and data science.
+           {user?.bio}
           </p>
           <div className="h-0.5 bg-blue-600 w-full"/>
           <h2 className="text-[22px] font-bold text-black">Skills</h2>
           <div className="flex gap-2 flex-wrap">
             {
-              ["React.js","Node.js","Express.js","MongoDB","C++","TailwindCSS","React.js","Node.js","Express.js","MongoDB","C++","TailwindCSS"].map(e =>
+              user?.skills.map(e =>
                 <p className="border rounded-lg px-3 py-1 bg-gray-300 text-black font-medium text-[16px]">{e}</p>
               )
             }
@@ -49,14 +61,14 @@ const UserProfile = () => {
           <h2 className="text-[22px] font-bold text-black">Interests</h2>
            <div className="flex gap-2 flex-wrap">
             {
-              ["Web Development","Open Source","FinTech","App Development"].map(e =>
+              user?.interests.map(e =>
                 <p className="border rounded-lg px-4 py-1 bg-gray-300 text-black font-medium text-[16px]">{e}</p>
               )
             }
           </div>
         </div>
       </div>
-      <DisplayProject />
+      {user?.projects.length > 0 && <DisplayProject projects={user?.projects} />}
     </div>
   );
 };

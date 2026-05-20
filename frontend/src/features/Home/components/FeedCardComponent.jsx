@@ -50,11 +50,11 @@ const FeedCardComponent = ({user,setIndex}) => {
         </h2>
 
         <div className='flex flex-wrap gap-3'>
-           { user?.skills.map((d)=>{
+           { user?.skills.map((d)=>(
                 <span className='bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-semibold border border-blue-200'>
-                d
+                {d}
                 </span>
-            })}
+            ))}
                         
         </div>
         </div>
@@ -65,11 +65,11 @@ const FeedCardComponent = ({user,setIndex}) => {
         </h2>
 
         <div className='flex flex-wrap gap-3'>
-             { user?.interests.map((d)=>{
+             { user?.interests.map((d)=>(
                 <span className='bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium border border-purple-200'>
-                d
+                {d}
                 </span>
-            })}
+            ))}
         </div>
         </div>
                 

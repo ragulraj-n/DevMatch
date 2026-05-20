@@ -1,0 +1,105 @@
+import React from 'react'
+
+const FeedCardComponent = () => {
+  return (
+    <div className='border border-gray-300 shadow-lg rounded-3xl mx-auto w-[60%] p-6 flex gap-10 bg-white hover:shadow-2xl transition-all duration-300'>
+
+      <div className='flex flex-col items-center w-1/4'>
+        <img
+          src="https://i.ibb.co/SDWmWY7C/Screenshot-2026-04-01-101108.png"
+          alt="profile"
+          className='h-[200px] w-[200px] rounded-full object-cover border-4 border-blue-500'
+        />
+
+        <button className='mx-auto px-4 py-2 bg-blue-500 hover:bg-blue-600 mt-4 rounded-xl w-full text-white text-lg font-semibold cursor-pointer transition-all duration-200'>
+          View Profile
+        </button>
+      </div>
+
+      <div className='flex flex-col w-full'>
+
+        <h1 className='font-bold text-3xl text-gray-800'>
+          Mood Mukish
+        </h1>
+
+        <div className='flex items-center gap-3 mt-3 flex-wrap'>
+          <p className="flex h-8 items-center py-2 px-4 rounded-2xl bg-blue-100 font-semibold text-blue-700 text-[15px]">
+            Student
+          </p>
+
+          <p className="flex h-8 items-center py-2 px-4 rounded-2xl bg-green-100 font-semibold text-green-700 text-[15px]">
+            Available
+          </p>
+        </div>
+
+        <p className='mt-4 text-gray-600 leading-relaxed'>
+          Passionate full-stack developer interested in building scalable web
+          applications and solving real-world problems using MERN stack and AI.
+        </p>
+
+        <div className='mt-5 flex items-start gap-4'>
+        <h2 className='text-lg font-bold text-gray-800 min-w-[80px]'>
+            Skills
+        </h2>
+
+        <div className='flex flex-wrap gap-3'>
+            <span className='bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-semibold border border-blue-200'>
+            React.js
+            </span>
+
+            <span className='bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-semibold border border-blue-200'>
+            Node.js
+            </span>
+
+            <span className='bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-semibold border border-blue-200'>
+            MongoDB
+            </span>
+
+            <span className='bg-blue-100 text-blue-700 px-4 py-2 rounded-xl text-sm font-semibold border border-blue-200'>
+            Express.js
+            </span>
+        </div>
+        </div>
+
+        <div className='mt-4 flex items-start gap-4'>
+        <h2 className='text-lg font-bold text-gray-800 min-w-[80px]'>
+            Interests
+        </h2>
+
+        <div className='flex flex-wrap gap-3'>
+            <span className='bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium border border-purple-200'>
+            AI
+            </span>
+
+            <span className='bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium border border-purple-200'>
+            Startups
+            </span>
+
+            <span className='bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium border border-purple-200'>
+            Open Source
+            </span>
+
+            <span className='bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium border border-purple-200'>
+            UI/UX
+            </span>
+        </div>
+        </div>
+                
+        <div className='flex gap-6 mt-8 pl-[20%]'>
+
+          <button className='bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200'>
+            Connect
+          </button>
+
+          <button className='bg-red-100 hover:bg-red-200 text-red-600 px-6 py-3 rounded-xl font-semibold transition-all duration-200'>
+            Ignore
+          </button>
+
+        </div>
+
+      </div>
+    </div>
+  )
+}
+
+export default FeedCardComponent

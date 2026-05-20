@@ -1,7 +1,7 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 
-const AuthLayout = () => {
+const Layout = () => {
   return (
     <div>
       <Outlet />
@@ -9,4 +9,4 @@ const AuthLayout = () => {
   )
 }
 
-export default AuthLayout
+export default Layout

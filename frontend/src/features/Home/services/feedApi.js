@@ -9,3 +9,12 @@ export const getUserFeedApi = async () =>{
     throw err;
    }
 }
+
+export const sendConnectionRequest = async (status,userId)=>{
+    try{
+        const res = await axiosApi.post(`/connections/${status}/${userId}`);
+        return res;
+    }catch(err){
+        throw err;
+    }
+}

@@ -4,14 +4,18 @@ import { getUserFeedApi } from '../services/feedApi';
 
 const UserFeedComponenet = () => {
   const [userFeed,setUserFeed] = useState([]);
-    
-    useEffect(()=>{
-        const fetchFeed = async () =>{
+  const [page,setPage] = useState(1);
+  const [limit,setLimit] = useState(1);
+  const [index,setIndex] = useState(0);
+  const fetchFeed = async () =>{
             const data = await getUserFeedApi();
             setUserFeed(data?.data?.data);
-        }
+  }
+
+  useEffect(()=>{
         fetchFeed();
-    },[])
+    },[page])
+
     console.log(userFeed);
   return (
     <div className='flex h-screen justify-center items-center'>

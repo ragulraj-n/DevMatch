@@ -1,6 +1,12 @@
 import React from 'react'
+import { sendConnectionRequest } from '../services/feedApi'
 
 const FeedCardComponent = ({user}) => {
+
+    const handleConnectionButton = async (status) =>{
+        const res = await sendConnectionRequest(status,user._id);
+        console.log(res);
+    }
 
   return (
     <div className='border border-gray-300 shadow-lg rounded-3xl mx-auto w-[60%] p-6 flex gap-10 bg-white hover:shadow-2xl transition-all duration-300'>
@@ -68,11 +74,14 @@ const FeedCardComponent = ({user}) => {
                 
         <div className='flex gap-6 mt-8 pl-[20%]'>
 
-          <button className='bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200'>
+          <button className='bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200'
+          onClick={()=>handleConnectionButton("requested")}>
             Connect
           </button>
 
-          <button className='bg-red-100 hover:bg-red-200 text-red-600 px-6 py-3 rounded-xl font-semibold transition-all duration-200'>
+          <button className='bg-red-100 hover:bg-red-200 text-red-600 px-6 py-3 rounded-xl font-semibold transition-all duration-200'
+            onClick={()=>handleConnectionButton("ignored")}
+            >
             Ignore
           </button>
 

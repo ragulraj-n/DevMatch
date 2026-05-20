@@ -1,10 +1,11 @@
 import React from 'react'
 import { sendConnectionRequest } from '../services/feedApi'
 
-const FeedCardComponent = ({user}) => {
+const FeedCardComponent = ({user,setIndex}) => {
 
     const handleConnectionButton = async (status) =>{
         const res = await sendConnectionRequest(status,user._id);
+        setIndex((prev)=>prev+1);
         console.log(res);
     }
 

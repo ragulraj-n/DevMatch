@@ -1,9 +1,9 @@
 import axiosApi from "../../../services/axiosApi"
 
 
-export const getUserFeedApi = async () =>{
+export const getUserFeedApi = async (page,limit) =>{
    try{
-     const res = await axiosApi.get("/feed");
+     const res = await axiosApi.get(`/feed?page=${page}&limit=${limit}`);
      return res;
    }catch(err){
     throw err;

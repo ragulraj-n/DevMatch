@@ -14,7 +14,7 @@ const FeedCardComponent = ({user,setIndex}) => {
 
       <div className='flex flex-col items-center w-1/4'>
         <img
-          src={user?.profileImage}
+          src={user?.profileImage?.imageUrl}
           alt="profile"
           className='h-[200px] w-[200px] rounded-full object-cover border-4 border-blue-500'
         />

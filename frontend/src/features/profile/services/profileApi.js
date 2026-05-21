@@ -35,7 +35,7 @@ export const getMyProfileApi = async () =>{
     try{
         const res = await axiosApi.get('/user/myprofile');
         return res.data.data;
-    }catch{
+    }catch(err){
         throw err;
     }
 }

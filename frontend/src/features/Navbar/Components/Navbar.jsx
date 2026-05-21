@@ -1,11 +1,27 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaUsers } from "react-icons/fa";
 import { IoHomeSharp } from "react-icons/io5";
 import { IoMdNotifications } from "react-icons/io";
 import { Link } from 'react-router-dom';
+import { getCurUserProfile } from '../services/navbarApi';
+import { useDispatch, useSelector } from 'react-redux';
+import { addUser } from '../../user/userSlice';
 
 const Navbar = () => {
-   
+    
+    const [user,setUser] = useState(null);
+    const dispatch = useDispatch();
+
+    if(user) dispatch(addUser(user));
+    const userData = useSelector((state)=>state.user.currentUser);
+    
+    useEffect(()=>{
+        const fetchUserData = async () =>{
+            const data = await getCurUserProfile();
+            setUser(data);
+        }
+        fetchUserData();
+    },[]);
     const navItemsStyle = "w-14 h-[44px] flex flex-col items-center justify-center cursor-pointer";
   return (
     <div className='h-16 border-2 flex items-center justify-between gap-5'>
@@ -33,7 +49,7 @@ const Navbar = () => {
             </div>
             <Link to="profile">
             <div className={navItemsStyle + " mb-2"}>
-                <img src="https://i.ibb.co/NnCS39LF/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission.jpg" className='w-14 h-14 rounded-full object-cover'/>
+                <img src={userData?.profileImage?.imageUrl} className='w-12 h-12 rounded-full object-cover'/>
             </div>
             </Link>
         </div>

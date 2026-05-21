@@ -31,7 +31,8 @@ const getUserProfile = asyncHandler(async (req,res) =>{
             interests: user.interests,
             github: user.github,
             linkedin: user.linkedin,
-            portfolio: user.portfolio
+            portfolio: user.portfolio,
+            projects:user.projects,
         };
 
         if(isOwner) {

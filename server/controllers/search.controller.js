@@ -144,6 +144,7 @@ const searchUserSuggestion = asyncHandler(async (req, res) => {
           userName: 1,
           firstName: 1,
           lastName: 1,
+          bio: 1,
           profileImage: 1,
           searchScore: 1, 
         },

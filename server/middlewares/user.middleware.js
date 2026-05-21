@@ -8,10 +8,9 @@ const validateEditProfile = [
           throw new ApiError(400,"INVALID_REQUEST","Fields required to edit");
 
         const allowedList = ["firstName","lastName","userName","bio","profileImage","location","experienceLevel","availabilityStatus","skills","interests","github","linkedin","portfolio"];
-    
-        const isValid = Object.keys(req.body).every((key) => allowedList.includes(key));
+        const isValid = Object.keys(req.body).every((key) =>allowedList.includes(key));
         if(!isValid) 
-            throw new ApiError(403,"FORBIDDEN","Unallowed field sent to edit");
+            throw new ApiError(403,"FORBIDDEN",`Unallowed field sent to edit`);
         next();
 }),
 

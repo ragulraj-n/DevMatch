@@ -31,9 +31,9 @@ export const addProjectApi = async (data) =>{
     }
 }
 
-export const getMyProfileApi = async () =>{
+export const getUserProfileApi = async (userName) =>{
     try{
-        const res = await axiosApi.get('/user/myprofile');
+        const res = await axiosApi.get(`/user/${userName}`);
         return res.data.data;
     }catch(err){
         throw err;

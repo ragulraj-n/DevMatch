@@ -15,8 +15,9 @@ const DisplayProjectComponent = ({project}) => {
               <p className="font-bold border bg-blue-800 text-white rounded-md w-32 py-1 px-2 flex">Tech Stack<GrFormNextLink size={25} /></p>
               <div className="flex gap-2 flex-wrap">
                 {
-                  project?.techStack.map(e =>
-                    <p className="border rounded-lg px-3 py-1 bg-gray-300 text-black font-medium text-[16px]">{e}</p>
+                  project?.techStack.map((e,index) =>
+                    <p className="border rounded-lg px-3 py-1 bg-gray-300 text-black font-medium text-[16px]"
+                    key={index}>{e}</p>
                   )
                 }
              </div>

@@ -13,6 +13,7 @@ const Navbar = () => {
     const [user, setUser] = useState(null);
     const dispatch = useDispatch();
     const [search,setSearch] = useState("");
+    const [showSuggestion,setShowSuggestion] = useState(false);
 
     if (user) dispatch(addUser(user));
     const userData = useSelector((state) => state.user.currentUser);
@@ -32,7 +33,7 @@ const Navbar = () => {
     <div className='relative border-b bg-gray-100'>
 
         <div className='absolute top-16 left-0 md:left-44 w-full md:w-[383px] z-50 bg-gray-50'>
-            <SearchSuggestion search={search}/>
+            <SearchSuggestion search={search} showSuggestion={showSuggestion}/>
         </div>
 
         <div className='flex flex-col md:flex-row items-center justify-between gap-4 px-3 py-2'>
@@ -47,6 +48,8 @@ const Navbar = () => {
                     className='border-2 h-10 w-full md:w-64 focus:w-full md:focus:w-96 px-3 rounded-3xl outline-none bg-gray-50 transition-all duration-300'
                     placeholder='Search Users'
                     onChange={(e)=>setSearch(e.target.value)}
+                    onFocus={()=>setShowSuggestion(true)}
+                    onBlur={()=>setShowSuggestion(false)}
                 />
             </div>
 

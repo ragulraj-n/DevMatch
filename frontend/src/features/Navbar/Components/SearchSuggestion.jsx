@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import SearchUserCard from './SearchUserCard'
 import { getSearchSuggestionApi } from '../services/navbarApi';
 
-const SearchSuggestion = ({search}) => {
+const SearchSuggestion = ({search,showSuggestion}) => {
     const [searchData,setSearchData] = useState([]);
     const limit = 5;
     
@@ -17,7 +17,7 @@ const SearchSuggestion = ({search}) => {
 
   return (
     <div>{
-        searchData.length>0 && <div className='border-2 pb-2'>
+        showSuggestion && searchData.length>0 && <div className='border-2 pb-2'>
             {
                 searchData?.map((d)=>{
                     return <SearchUserCard user={d} key={d._id}/>

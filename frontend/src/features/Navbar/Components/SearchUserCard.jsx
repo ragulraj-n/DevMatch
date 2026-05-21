@@ -2,7 +2,7 @@ import React from 'react'
 
 const SearchUserCard = ({user}) => {
   return (
-    <div className='h-[px] border-2 w-full flex justify-between items-center px-2'>
+    <div className='h-[px] w-full flex justify-between items-center px-2'>
         <div className='w-1/5'>
             <img src={user?.profileImage?.imageUrl || "https://i.ibb.co/NnCS39LF/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission.jpg"} className='rounded-full h-11 w-11'/>
         </div>
@@ -14,4 +14,4 @@ const SearchUserCard = ({user}) => {
   )
 }
 
-export default SearchUserCard
+export default SearchUserCard;

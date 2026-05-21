@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import FeedCardComponent from './FeedCardComponent'
 import { getUserFeedApi } from '../services/feedApi';
+import SearchSuggestion from '../../Navbar/Components/SearchSuggestion';
 
 const UserFeedComponenet = () => {
   const [userFeed,setUserFeed] = useState([]);
@@ -24,9 +25,9 @@ const UserFeedComponenet = () => {
   },[index])
 
   return (
-    <div className='flex h-screen justify-center items-center'>
-        <FeedCardComponent user={userFeed[index]} setIndex={setIndex}/>
-    </div>
+      <div className='flex h-screen justify-center items-center'>
+          <FeedCardComponent user={userFeed[index]} setIndex={setIndex}/>
+      </div>
   )
 }
 

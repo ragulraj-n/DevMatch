@@ -8,3 +8,12 @@ export const getCurUserProfile = async () =>{
         throw err;
     }
 }
+
+export const getSearchSuggestionApi = async (q,limit)=>{
+    try{
+        const res = await axiosApi.get(`/search/suggestion?q=${q}&limit=${limit}`);
+        return res.data.data;
+    }catch(err){
+        throw err;
+    }
+}

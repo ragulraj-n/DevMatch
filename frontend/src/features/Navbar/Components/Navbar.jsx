@@ -2,8 +2,8 @@ import React, { useEffect, useState , useRef } from 'react'
 import { FaUsers } from "react-icons/fa";
 import { IoHomeSharp } from "react-icons/io5";
 import { IoMdNotifications } from "react-icons/io";
-import { Link } from 'react-router-dom';
-import { getCurUserProfile } from '../services/navbarApi';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { getCurUserProfile, logoutUserApi } from '../services/navbarApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../../user/userSlice';
 import SearchSuggestion from './SearchSuggestion';
@@ -16,7 +16,14 @@ const Navbar = () => {
     const [search,setSearch] = useState("");
     const [showSuggestion,setShowSuggestion] = useState(false);
     const [showNavProfile,setShowNavProfile] = useState(false);
+    const [currUserNotFound,setCurrUserNotFound] = useState(false);
+    const navigate = useNavigate();
     const profileRef = useRef(null);
+
+    if(currUserNotFound){
+        navigate('/login');
+        setCurrUserNotFound(false);
+    }
 
     useEffect(() => {
         if(user){
@@ -28,7 +35,7 @@ const Navbar = () => {
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const data = await getCurUserProfile();
+            const data = await getCurUserProfile(()=>setCurrUserNotFound(true));
             setUser(data);
         }
         fetchUserData();
@@ -56,6 +63,13 @@ const Navbar = () => {
         };
 
     }, []);
+
+    const userLogout = async () =>{
+        const res = await logoutUserApi();
+        navigate('/login');
+    }
+
+
 
 
     const navItemsStyle =
@@ -111,7 +125,7 @@ const Navbar = () => {
                         className='w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover'
                         onClick={()=>setShowNavProfile(prev => !prev)}
                     />
-                   {showNavProfile && <NavProfileCard setShowNavProfile={()=>setShowNavProfile(false)} />}
+                   {showNavProfile && <NavProfileCard setShowNavProfile={()=>setShowNavProfile(false)} userLogout={userLogout}/>}
                 </div>
             </div>
         </div>

@@ -32,7 +32,7 @@ const LoginForm = () => {
           });
           toast.success("User LogIn successfully");
           dispatch(addUser(res?.data?.data));
-          navigate("/setup-profile");
+          navigate("/feed");
           setError({});
         }catch(err){
           toast.error(err.response?.data?.message||"Login failed");

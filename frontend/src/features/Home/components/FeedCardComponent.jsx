@@ -1,5 +1,6 @@
 import React from 'react'
 import { sendConnectionRequest } from '../services/feedApi'
+import { Link } from 'react-router-dom';
 
 const FeedCardComponent = ({user,setIndex}) => {
 
@@ -19,9 +20,11 @@ const FeedCardComponent = ({user,setIndex}) => {
           className='h-[200px] w-[200px] rounded-full object-cover border-4 border-blue-500'
         />
 
-        <button className='mx-auto px-4 py-2 bg-blue-500 hover:bg-blue-600 mt-4 rounded-xl w-full text-white text-lg font-semibold cursor-pointer transition-all duration-200'>
-          View Profile
-        </button>
+        <Link to={`/u/${user?.userName}`}>
+              <button className='mx-auto px-4 py-2 bg-blue-500 hover:bg-blue-600 mt-4 rounded-xl w-full text-white text-lg font-semibold cursor-pointer transition-all duration-200'>
+              View Profile
+            </button>
+        </Link>
       </div>
 
       <div className='flex flex-col w-full'>

@@ -15,7 +15,12 @@ const Navbar = () => {
     const [search,setSearch] = useState("");
     const [showSuggestion,setShowSuggestion] = useState(false);
 
-    if (user) dispatch(addUser(user));
+    useEffect(() => {
+        if(user){
+            dispatch(addUser(user));
+        }
+    }, [user, dispatch]);
+
     const userData = useSelector((state) => state.user.currentUser);
 
     useEffect(() => {
@@ -49,7 +54,7 @@ const Navbar = () => {
                     placeholder='Search Users'
                     onChange={(e)=>setSearch(e.target.value)}
                     onFocus={()=>setShowSuggestion(true)}
-                    onBlur={()=>setShowSuggestion(false)}
+                    onBlur={()=>setTimeout(()=>setShowSuggestion(false),300)}
                 />
             </div>
 

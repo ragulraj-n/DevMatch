@@ -32,7 +32,7 @@ const UserProfile = () => {
     if (currUser?.userName === userName) {
         setUser(currUser);
     } 
-    else {
+    else {  
         fetchProfile();
     }
 

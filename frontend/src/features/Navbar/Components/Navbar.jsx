@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState , useRef } from 'react'
 import { FaUsers } from "react-icons/fa";
 import { IoHomeSharp } from "react-icons/io5";
 import { IoMdNotifications } from "react-icons/io";
@@ -7,6 +7,7 @@ import { getCurUserProfile } from '../services/navbarApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../../user/userSlice';
 import SearchSuggestion from './SearchSuggestion';
+import NavProfileCard from './NavProfileCard';
 
 const Navbar = () => {
 
@@ -14,6 +15,8 @@ const Navbar = () => {
     const dispatch = useDispatch();
     const [search,setSearch] = useState("");
     const [showSuggestion,setShowSuggestion] = useState(false);
+    const [showNavProfile,setShowNavProfile] = useState(false);
+    const profileRef = useRef(null);
 
     useEffect(() => {
         if(user){
@@ -30,6 +33,30 @@ const Navbar = () => {
         }
         fetchUserData();
     }, []);
+
+    useEffect(() => {
+
+        const handleClickOutside = (event) => {
+
+            if (
+                profileRef.current &&
+                !profileRef.current.contains(event.target)
+            ) {
+                setShowNavProfile(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener(
+                "mousedown",
+                handleClickOutside
+            );
+        };
+
+    }, []);
+
 
     const navItemsStyle =
         "w-12 sm:w-14 h-[44px] flex flex-col items-center justify-center cursor-pointer";
@@ -77,15 +104,15 @@ const Navbar = () => {
                     <p className='text-[10px] sm:text-xs'>Notification</p>
                 </div>
 
-                <Link to="/profile">
-                    <div className={navItemsStyle}>
-                        <img
-                            src={userData?.profileImage?.imageUrl}
-                            className='w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover'
-                        />
-                    </div>
-                </Link>
-
+                <div className={navItemsStyle + ' relative'}
+                ref={profileRef}>
+                    <img
+                        src={userData?.profileImage?.imageUrl}
+                        className='w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover'
+                        onClick={()=>setShowNavProfile(prev => !prev)}
+                    />
+                   {showNavProfile && <NavProfileCard setShowNavProfile={()=>setShowNavProfile(false)} />}
+                </div>
             </div>
         </div>
     </div>

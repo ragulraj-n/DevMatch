@@ -12,9 +12,10 @@ const LoginForm = () => {
     const [password,setPassword] = useState("");
     const [error,setError] = useState({});
     const [isShowPassword,setIsShowPassword] = useState(false);
-
+    const currUser = useSelector(state => state.user.currentUser);
     const navigate = useNavigate();
 
+    if(currUser) navigate('/feed');
     const handleLogin = async () =>{
         try{
           const newError = {};
@@ -61,6 +62,7 @@ const LoginForm = () => {
                     onChange={e => setPassword(e.target.value)}
                     value={password}
                     type={isShowPassword?'text':'password'} />
+                    <p className='font-semibold'>Forgot Password?</p>
                     {isShowPassword===false && <FaEyeSlash className='absolute top-8 right-5 cursor-pointer' 
                     onClick={handleShowPassword} size={24}/>}
                     {isShowPassword && <FaEye className='absolute top-8 right-5 cursor-pointer' 

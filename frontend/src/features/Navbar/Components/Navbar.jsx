@@ -5,7 +5,7 @@ import { IoMdNotifications } from "react-icons/io";
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { getCurUserProfile, logoutUserApi } from '../services/navbarApi';
 import { useDispatch, useSelector } from 'react-redux';
-import { addUser } from '../../user/userSlice';
+import { addUser, removeUser } from '../../user/userSlice';
 import SearchSuggestion from './SearchSuggestion';
 import NavProfileCard from './NavProfileCard';
 
@@ -64,13 +64,17 @@ const Navbar = () => {
 
     }, []);
 
-    const userLogout = async () =>{
-        const res = await logoutUserApi();
+    const userLogout = async () => {
+    try {
+        await logoutUserApi();
+        dispatch(removeUser());
+        console.log("removed user");
         navigate('/login');
+    } 
+    catch (error) {
+        console.log("Logout failed:", error);
     }
-
-
-
+}
 
     const navItemsStyle =
         "w-12 sm:w-14 h-[44px] flex flex-col items-center justify-center cursor-pointer";

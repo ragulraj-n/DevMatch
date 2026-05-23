@@ -20,8 +20,10 @@ const SignupForm = () => {
     const [error,setError] = useState({});
     const [isShowPassword,setIsShowPassword] = useState(false);
     const [isShowConfirmPassword,setIsShowConfirmPassword] = useState(false);
-
+    const currUser = useSelector(state => state.user.currentUser);
+    
     const navigate = useNavigate();
+    if(currUser) navigate('/feed');
 
     const handleRegister = async () =>{
             const newError = {};

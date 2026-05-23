@@ -6,14 +6,25 @@ const SearchSuggestion = ({search,showSuggestion}) => {
     const [searchData,setSearchData] = useState([]);
     const limit = 5;
     
-    useEffect(()=>{
-        const fetchSearchData = async () =>{
-            const data = await getSearchSuggestionApi(search,limit);
-            setSearchData(data);
+    useEffect(() => {
+        if (search.length < 2) {
+            setSearchData([]);
+            return; 
         }
-        if(search.length<2) setSearchData([]);
-        if(search.length >= 2) fetchSearchData();
-    },[search]);
+
+        const searchId = setTimeout(async () => {
+            try {
+                const data = await getSearchSuggestionApi(search, limit);
+                setSearchData(data);
+            } catch (error) {
+                console.error("Search API failed:", error);
+            }
+        }, 300);
+
+        return () => {
+            clearTimeout(searchId);
+        };
+}, [search]);
 
   return (
     <div>{

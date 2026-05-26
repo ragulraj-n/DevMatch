@@ -6,6 +6,7 @@ import Signup from '../features/auth/pages/Signup'
 import Profile from '../features/profile/page/profile'
 import SetUpProfile from '../features/profile/page/SetUpProfile'
 import FeedPage from '../features/Home/pages/FeedPage'
+import ConnectionsPage from '../features/connection/page/ConnectionsPage'
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const AppRoutes = () => {
         <Route path="/u/:userName" element={<Profile />} />
         <Route path="setup-profile" element={<SetUpProfile />} />
         <Route path="feed" element={<FeedPage />} />
+        <Route path="connections" element={<ConnectionsPage />} />
       </Route>
     </Routes>
   )

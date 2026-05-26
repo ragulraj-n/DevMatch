@@ -12,41 +12,43 @@ import toast from 'react-hot-toast';
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true); // Add loading state
     const dispatch = useDispatch();
     const [search, setSearch] = useState("");
     const [showSuggestion, setShowSuggestion] = useState(false);
     const [showNavProfile, setShowNavProfile] = useState(false);
-    const [currUserNotFound, setCurrUserNotFound] = useState(false);
     const [hasNotifications, setHasNotifications] = useState(false);
     const navigate = useNavigate();
     const profileRef = useRef(null);
     const searchRef = useRef(null);
 
+    const userData = useSelector((state) => state.user.currentUser);
+    const isLoggedIn = !!userData || !!user; 
+
     useEffect(() => {
-        if (currUserNotFound) {
-            navigate('/login');
-            setCurrUserNotFound(false);
+        const fetchUserData = async () => {
+            try {
+                setLoading(true);
+                const data = await getCurUserProfile();
+                if (data) {
+                    setUser(data);
+                    dispatch(addUser(data));
+                }
+            } catch (error) {
+                console.log("Not authenticated - showing public navbar");
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
         }
-    }, [currUserNotFound, navigate]);
+        fetchUserData();
+    }, []); 
 
     useEffect(() => {
         if (user) {
             dispatch(addUser(user));
         }
     }, [user, dispatch]);
-
-    const userData = useSelector((state) => state.user.currentUser);
-    const isLoggedIn = !!userData;
-
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const data = await getCurUserProfile(() => setCurrUserNotFound(true));
-            setUser(data);
-        }
-        if (!isLoggedIn) {
-            fetchUserData();
-        }
-    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -68,6 +70,7 @@ const Navbar = () => {
     const userLogout = async () => {
         try {
             await logoutUserApi();
+            setUser(null);
             dispatch(removeUser());
             toast.success("Logged out successfully");
             navigate('/login');
@@ -81,12 +84,27 @@ const Navbar = () => {
     const iconStyle = "w-6 h-6 sm:w-7 sm:h-7";
     const labelStyle = "text-[10px] sm:text-xs mt-1 font-medium";
 
+    if (loading) {
+        return (
+            <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 shadow-lg border-b border-white/20">
+                <div className="container mx-auto px-4 py-3">
+                    <div className="flex items-center justify-between">
+                        <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                            DevMatch
+                        </h1>
+                        <div className="w-20 h-10 bg-gray-200 rounded-xl animate-pulse"></div>
+                    </div>
+                </div>
+            </nav>
+        )
+    }
+
     if (!isLoggedIn) {
         return (
             <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 shadow-lg border-b border-white/20">
                 <div className="container mx-auto px-4 py-3">
                     <div className="flex items-center justify-between">
-                        <Link to="/login">
+                        <Link to="/">
                             <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                                 DevMatch
                             </h1>
@@ -173,7 +191,7 @@ const Navbar = () => {
 
                         <div className={navItemsStyle + " relative"} ref={profileRef}>
                             <img
-                                src={userData?.profileImage?.imageUrl || "https://i.ibb.co/NnCS39LF/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission.jpg"}
+                                src={userData?.profileImage?.imageUrl || user?.profileImage?.imageUrl || "https://i.ibb.co/NnCS39LF/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission.jpg"}
                                 className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-white shadow-md hover:border-blue-500 transition-all duration-200"
                                 onClick={() => setShowNavProfile(prev => !prev)}
                                 alt="Profile"

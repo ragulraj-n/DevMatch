@@ -24,7 +24,7 @@ const UserProfile = () => {
             setUser(currUser);
             setLoading(false);
             return;
-        }
+        } 
 
         if (currUser?.userName === userName) {
             setUser(currUser);
@@ -113,14 +113,14 @@ const UserProfile = () => {
                 <p className='text-gray-500 mt-1 text-lg'>@{user?.userName}</p>
               </div>
               
-              <button 
+             {currUser && <button 
                 className='px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-md flex items-center gap-2'
                 onClick={handleSendConnectionRequest}
                 disabled={sendingRequest}
               >
                 {sendingRequest ? <FaSpinner className='animate-spin' /> : <FaUserPlus />}
                 Connect
-              </button>
+              </button>}
             </div>
 
             <div className='flex flex-wrap gap-3 mb-6'>

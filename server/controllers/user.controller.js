@@ -19,6 +19,7 @@ const getUserProfile = asyncHandler(async (req,res) =>{
         const isOwner = req.user && req.user.userName === userNameParams;
 
         const responseData = {
+            _id:user._id,
             firstName: user.firstName,
             lastName: user.lastName,
             userName: user.userName,

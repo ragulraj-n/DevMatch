@@ -1,14 +1,10 @@
 import axiosApi from "../../../services/axiosApi";
 
-export const getCurUserProfile = async (setCurrUserNotFound) =>{
+export const getCurUserProfile = async () =>{
      try{
         const res = await axiosApi.get('/user/myprofile');
         return res.data.data;
     }catch(err){
-        if(err.response.data.errorCode === "UNAUTHORIZED"){
-            setCurrUserNotFound();
-            return;
-        }
         throw err;
     }
 }

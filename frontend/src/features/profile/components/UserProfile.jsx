@@ -10,6 +10,7 @@ import { getUserProfileApi } from "../services/profileApi";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast from 'react-hot-toast';
+import { sendConnectionRequest } from "../services/connectionApi";
 
 const UserProfile = () => {
   const currUser = useSelector((state)=>state.user.currentUser);
@@ -48,7 +49,14 @@ const UserProfile = () => {
   }, [userName, currUser]);
 
   const handleSendConnectionRequest = async () => {
-    toast.success("Connection request feature coming soon!");
+    try{
+      const sendRequest =  await sendConnectionRequest(user._id);
+      toast.success("Connection request sent");
+    }catch(err){
+      if(err?.response?.data?.errorCode === "CONNECTION_REQUEST_ALREADY_SENT") toast.success("Conection sent already");
+      else toast.error("Unable to send Request");
+    }
+    
   };
 
   if(loading){

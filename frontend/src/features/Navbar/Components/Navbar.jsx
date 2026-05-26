@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true); // Add loading state
+    const [loading, setLoading] = useState(true); 
     const dispatch = useDispatch();
     const [search, setSearch] = useState("");
     const [showSuggestion, setShowSuggestion] = useState(false);

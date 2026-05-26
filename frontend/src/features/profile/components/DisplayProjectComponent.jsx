@@ -1,35 +1,99 @@
-import React from 'react'
-import {DiGithubBadge} from "react-icons/di";
-import {FaLaptopCode} from "react-icons/fa";
+import React, { useState } from 'react'
+import { DiGithubBadge } from "react-icons/di";
+import { FaLaptopCode, FaExternalLinkAlt } from "react-icons/fa";
 import { GrFormNextLink } from "react-icons/gr";
+import { HiOutlineCode } from "react-icons/hi";
 
 const DisplayProjectComponent = ({project}) => {
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const description = project?.description || "";
+  const shouldTruncate = description.length > 150;
+  const displayDescription = showFullDescription ? description : description.slice(0, 150);
+
   return (
-    <div className="w-4/5 bg-gray-400 mx-auto mt-4 rounded-xl py-2 pb-4">
-        <div className="px-5 py-2 flex gap-5 items-center">
-            <FaLaptopCode size={60}/>
-           <div className="w-3/5 h-30">
-             <h2 className="text-2xl font-bold mb-2">{project?.title}</h2>
-             <p className="line-clamp-4">{project.description}</p>
-             <div className="flex gap-2 mt-2">
-              <p className="font-bold border bg-blue-800 text-white rounded-md w-32 py-1 px-2 flex">Tech Stack<GrFormNextLink size={25} /></p>
-              <div className="flex gap-2 flex-wrap">
-                {
-                  project?.techStack.map((e,index) =>
-                    <p className="border rounded-lg px-3 py-1 bg-gray-300 text-black font-medium text-[16px]"
-                    key={index}>{e}</p>
-                  )
-                }
-             </div>
-             </div>
-           </div>
-           <div className="flex flex-col mx-auto gap-6 items-center mt-5">
-              <a href={project?.githubLink} target='_blank' ><p className="flex items-center border rounded-full py-1 px-3 bg-blue-700 text-black font-semibold cursor-pointer">Source Code<DiGithubBadge size={35} /></p></a>
-              <a href={project?.liveLink} target='_blank' ><p className="flex items-center border rounded-full py-1 px-3 bg-blue-700 text-black font-semibold cursor-pointer">View Project<GrFormNextLink size={35} /></p></a>
-           </div>
+    <div className="group relative max-w-5xl mx-4 md:mx-auto mb-6">
+      <div className='absolute -inset-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500'></div>
+      
+      <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+        
+        <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600'></div>
+        
+        <div className="p-6 md:p-8">
+          <div className="flex flex-col md:flex-row gap-6">
+            
+            <div className='hidden md:flex items-start justify-center'>
+              <div className='w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg'>
+                <FaLaptopCode size={32} className="text-white" />
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4'>
+                <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                  {project?.title}
+                </h2>
+                
+                <div className='flex gap-3'>
+                  {project?.githubLink && (
+                    <a href={project?.githubLink} target='_blank' rel="noopener noreferrer" 
+                      className='flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-xl transition-all duration-200 transform hover:scale-105 text-sm font-medium shadow-md'>
+                      <DiGithubBadge size={20} />
+                      Code
+                    </a>
+                  )}
+                  
+                  {project?.liveLink && (
+                    <a href={project?.liveLink} target='_blank' rel="noopener noreferrer"
+                      className='flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-all duration-200 transform hover:scale-105 text-sm font-medium shadow-md'>
+                      <FaExternalLinkAlt size={14} />
+                      Live Demo
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-gray-600 leading-relaxed mb-4">
+                {displayDescription}
+                {shouldTruncate && !showFullDescription && (
+                  <button 
+                    onClick={() => setShowFullDescription(true)}
+                    className='text-blue-600 hover:text-blue-700 font-medium ml-2'
+                  >
+                    ...read more
+                  </button>
+                )}
+                {showFullDescription && (
+                  <button 
+                    onClick={() => setShowFullDescription(false)}
+                    className='text-blue-600 hover:text-blue-700 font-medium ml-2'
+                  >
+                    show less
+                  </button>
+                )}
+              </p>
+
+              <div>
+                <div className='flex items-center gap-2 mb-3'>
+                  <HiOutlineCode className='text-blue-600' size={18} />
+                  <h3 className='font-semibold text-gray-700'>Tech Stack</h3>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {project?.techStack?.map((tech, index) => (
+                    <span 
+                      key={index}
+                      className='bg-gradient-to-r from-gray-50 to-gray-100 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium border border-gray-200 hover:shadow-md hover:border-blue-200 transition-all'
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
   )
 }
 
-export default DisplayProjectComponent;
+export default DisplayProjectComponent

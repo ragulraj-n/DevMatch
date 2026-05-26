@@ -3,7 +3,7 @@ import { validateConfirmPassword, validateEmail, validateFirstName, validateLast
 import {signupApi } from '../services/authApi';
 import toast from 'react-hot-toast';
 import { Link, replace, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../../user/userSlice';
 import { FaEyeSlash,FaEye } from "react-icons/fa";
 
@@ -23,7 +23,7 @@ const SignupForm = () => {
     const currUser = useSelector(state => state.user.currentUser);
     
     const navigate = useNavigate();
-    if(currUser) navigate('/feed');
+    if(currUser) navigate('/setup-profile');
 
     const handleRegister = async () =>{
             const newError = {};

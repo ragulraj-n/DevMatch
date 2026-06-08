@@ -26,3 +26,23 @@ export const forgetPasswordApi = async (data)=>{
         throw err;
     }
 }
+
+
+export const validateResetTokenApi = async (token) => {
+    try{
+        const res = await axiosApi.post("/auth/reset-password/validate", { token });
+        console.log(res);
+        return res;
+    }catch(err){
+        throw err;
+    }
+}
+
+export const resetPasswordApi = async (token, password) => {
+    try{
+        const res = await axiosApi.post("/auth/reset-password", { token, password });
+        return res;
+    }catch(err){
+        throw err;
+    }
+}

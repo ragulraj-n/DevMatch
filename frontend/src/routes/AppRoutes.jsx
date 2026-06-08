@@ -10,6 +10,7 @@ import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 import ConnectionsPage from '../features/connection/page/ConnectionsPage'
 import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage'
+import ResetPasswordPage from '../features/auth/pages/ResetPasswordPage'
 
 const AppRoutes = () => {
   return (
@@ -21,6 +22,7 @@ const AppRoutes = () => {
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
           <Route path="forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="reset-password/:token" element={<ResetPasswordPage />} />
         </Route>
 
         <Route path="/u/:userName" element={<Profile />} />

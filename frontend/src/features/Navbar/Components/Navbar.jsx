@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { FaUsers, FaUserFriends } from "react-icons/fa";
 import { IoHomeSharp } from "react-icons/io5";
-import { IoMdNotifications, IoMdNotificationsOutline } from "react-icons/io";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link, useNavigate } from 'react-router-dom';
 import { getCurUserProfile, logoutUserApi } from '../services/navbarApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser, removeUser } from '../../user/userSlice';
 import SearchSuggestion from './SearchSuggestion';
 import NavProfileCard from './NavProfileCard';
+import NotificationComponent from './NotificationsComponent';
 import toast from 'react-hot-toast';
 
 const Navbar = () => {
@@ -17,10 +18,11 @@ const Navbar = () => {
     const [search, setSearch] = useState("");
     const [showSuggestion, setShowSuggestion] = useState(false);
     const [showNavProfile, setShowNavProfile] = useState(false);
-    const [hasNotifications, setHasNotifications] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
     const navigate = useNavigate();
     const profileRef = useRef(null);
     const searchRef = useRef(null);
+    const notificationRef = useRef(null);
 
     const userData = useSelector((state) => state.user.currentUser);
     const isLoggedIn = !!userData || !!user; 
@@ -54,6 +56,9 @@ const Navbar = () => {
         const handleClickOutside = (event) => {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
                 setShowNavProfile(false);
+            }
+            if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+                setShowNotifications(false);
             }
             if (searchRef.current && !searchRef.current.contains(event.target)) {
                 setTimeout(() => setShowSuggestion(false), 200);
@@ -160,7 +165,7 @@ const Navbar = () => {
                         </div>
                     </div>
 
-                    <div className="flex items-center justify-around w-full md:w-auto gap-4 sm:gap-6">
+                    <div className="flex items-center justify-center w-full md:w-auto gap-4 sm:gap-6">
                         <Link to="/feed">
                             <div className={navItemsStyle}>
                                 <IoHomeSharp className={iconStyle + " text-gray-600 group-hover:text-blue-600 transition-colors"} />
@@ -175,19 +180,13 @@ const Navbar = () => {
                             </div>
                         </Link>
 
-                        <Link to="/notifications">
-                            <div className={navItemsStyle + " relative"}>
-                                {hasNotifications && (
-                                    <span className="absolute -top-1 -right-2 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
-                                )}
-                                {hasNotifications ? (
-                                    <IoMdNotifications className={iconStyle + " text-red-500"} />
-                                ) : (
-                                    <IoMdNotificationsOutline className={iconStyle + " text-gray-600 group-hover:text-blue-600 transition-colors"} />
-                                )}
+                        <div className={navItemsStyle + " relative"} ref={notificationRef}>
+                            <div onClick={() => setShowNotifications(prev => !prev)}>
+                                <IoMdNotificationsOutline className={iconStyle + " text-gray-600 group-hover:text-blue-600 transition-colors"} />
                                 <p className={labelStyle + " text-gray-600 group-hover:text-blue-600 transition-colors"}>Notifications</p>
                             </div>
-                        </Link>
+                            {showNotifications && <NotificationComponent setShowNotifications={setShowNotifications} />}
+                        </div>
 
                         <div className={navItemsStyle + " relative"} ref={profileRef}>
                             <img

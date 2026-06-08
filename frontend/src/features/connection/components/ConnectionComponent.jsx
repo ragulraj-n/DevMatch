@@ -6,6 +6,7 @@ import { TbUserCircle } from "react-icons/tb"
 import toast from 'react-hot-toast'
 import { getConnection, getPendingRequest } from '../services/userConnectionApi'
 import { Link } from 'react-router-dom'
+import { handleConnectionRequestApi, removeConnectionApi } from '../../profile/services/connectionApi'
 
 const ConnectionComponent = () => {
     const currUser = useSelector(state => state.user.currentUser)
@@ -17,6 +18,7 @@ const ConnectionComponent = () => {
 
     useEffect(() => {
         fetchConnectionsData()
+        
     }, [])
 
     const fetchConnectionsData = async () => {
@@ -26,7 +28,6 @@ const ConnectionComponent = () => {
             const connectionRes = await getConnection();
             setPendingRequests(pendingRes)
             setConnections(connectionRes)
-            
         } catch (error) {
             console.log(error)
             toast.error("Failed to load connections")
@@ -35,12 +36,11 @@ const ConnectionComponent = () => {
         }
     }
 
-    const handleAcceptRequest = async (requestId) => {
+    const handleConnectionRequest = async (status,requestId) => {
         try {
             setActionLoading(true)
-            // You will implement API call here
-            // await acceptConnectionRequestApi(requestId)
-            toast.success("Connection request accepted")
+            await handleConnectionRequestApi(status,requestId);
+            toast.success(`Connection request ${status}`)
             fetchConnectionsData()
         } catch (error) {
             toast.error("Failed to accept request")
@@ -49,25 +49,11 @@ const ConnectionComponent = () => {
         }
     }
 
-    const handleRejectRequest = async (requestId) => {
-        try {
-            setActionLoading(true)
-            // You will implement API call here
-            // await rejectConnectionRequestApi(requestId)
-            toast.success("Connection request rejected")
-            fetchConnectionsData()
-        } catch (error) {
-            toast.error("Failed to reject request")
-        } finally {
-            setActionLoading(false)
-        }
-    }
 
     const handleRemoveConnection = async (connectionId) => {
         try {
             setActionLoading(true)
-            // You will implement API call here
-            // await removeConnectionApi(connectionId)
+            await removeConnectionApi(connectionId);
             toast.success("Connection removed")
             fetchConnectionsData()
         } catch (error) {
@@ -190,7 +176,7 @@ const ConnectionComponent = () => {
                                                                 <div className='flex gap-2'>
                                                                     <button
                                                                         className='px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 disabled:opacity-50'
-                                                                        onClick={() => handleAcceptRequest(request._id)}
+                                                                        onClick={() => handleConnectionRequest('accepted',request._id)}
                                                                         disabled={actionLoading}
                                                                     >
                                                                         <FaUserCheck size={16} />
@@ -198,7 +184,7 @@ const ConnectionComponent = () => {
                                                                     </button>
                                                                     <button
                                                                         className='px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 disabled:opacity-50'
-                                                                        onClick={() => handleRejectRequest(request._id)}
+                                                                        onClick={() => handleConnectionRequest('rejected',request._id)}
                                                                         disabled={actionLoading}
                                                                     >
                                                                         <FaUserMinus size={16} />
@@ -268,7 +254,7 @@ const ConnectionComponent = () => {
                                                                     </button>
                                                                     <button
                                                                         className='px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-all duration-200 flex items-center gap-2'
-                                                                        onClick={() => handleRemoveConnection(connection._id)}
+                                                                        onClick={() => handleRemoveConnection(connection.connectionId)}
                                                                     >
                                                                         <FaTrash size={14} />
                                                                         Remove

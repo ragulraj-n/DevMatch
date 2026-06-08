@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaEnvelope, FaArrowLeft } from "react-icons/fa"
 import toast from 'react-hot-toast'
+import { forgetPasswordApi } from '../services/authApi'
 
 const ForgotPasswordForm = () => {
     const [email, setEmail] = useState("")
@@ -28,36 +29,11 @@ const ForgotPasswordForm = () => {
         
         try {
             setIsLoading(true)
-            
-            // ==============================================
-            // TODO: Replace with your actual API call
-            // ==============================================
-            // API Endpoint: POST /auth/forgot-password
-            // 
-            // Expected Request Body:
-            // {
-            //     "email": "user@example.com"
-            // }
-            //
-            // Expected Response:
-            // {
-            //     "success": true,
-            //     "message": "Password reset link sent to email"
-            // }
-            // ==============================================
-            
-            // const response = await axiosApi.post('/auth/forgot-password', { email })
-            // const data = response.data
-            
-            // Mock API call - REMOVE THIS and uncomment above
-            await new Promise(resolve => setTimeout(resolve, 1500))
-            const mockSuccess = true
-            
-            if (mockSuccess) {
+            const res = await forgetPasswordApi({email});
+            if (res) {
                 setIsEmailSent(true)
                 toast.success("Password reset link sent to your email!")
             }
-            // ==============================================
             
         } catch (err) {
             console.log(err)
@@ -88,7 +64,7 @@ const ForgotPasswordForm = () => {
                             We've sent a password reset link to <strong className='text-blue-600'>{email}</strong>
                         </p>
                         <p className='text-sm text-gray-500 mb-6'>
-                            Click the link in the email to reset your password. The link will expire in 1 hour.
+                            Click the link in the email to reset your password. The link will expire in 15 minutes.
                         </p>
                         
                         <div className='space-y-3'>
@@ -177,28 +153,8 @@ const ForgotPasswordForm = () => {
                     </div>
                 </div>
 
-                <div className='fixed -z-10 top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob'></div>
-                <div className='fixed -z-10 bottom-20 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000'></div>
-                <div className='fixed -z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000'></div>
             </div>
 
-            <style jsx>{`
-                @keyframes blob {
-                    0% { transform: translate(0px, 0px) scale(1); }
-                    33% { transform: translate(30px, -50px) scale(1.1); }
-                    66% { transform: translate(-20px, 20px) scale(0.9); }
-                    100% { transform: translate(0px, 0px) scale(1); }
-                }
-                .animate-blob {
-                    animation: blob 7s infinite;
-                }
-                .animation-delay-2000 {
-                    animation-delay: 2s;
-                }
-                .animation-delay-4000 {
-                    animation-delay: 4s;
-                }
-            `}</style>
         </div>
     )
 }

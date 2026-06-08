@@ -17,3 +17,12 @@ export const signupApi = async (data)=>{
         throw err;
     }
 }
+
+export const forgetPasswordApi = async (data)=>{
+    try{
+        const res = await axiosApi.post("/auth/forgot-password",data);
+        return res;
+    }catch(err){
+        throw err;
+    }
+}

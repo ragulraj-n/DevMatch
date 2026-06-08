@@ -9,6 +9,7 @@ import FeedPage from '../features/Home/pages/FeedPage'
 import ProtectedRoute from './ProtectedRoute'
 import PublicRoute from './PublicRoute'
 import ConnectionsPage from '../features/connection/page/ConnectionsPage'
+import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage'
 
 const AppRoutes = () => {
   return (

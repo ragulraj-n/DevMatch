@@ -1,23 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { DiCode, DiGithubBadge} from "react-icons/di";
-import { TbWorld, TbMapPin, TbBriefcase } from "react-icons/tb";
-import { FaLinkedin, FaLink, FaEnvelope, FaUsers } from "react-icons/fa";
-import { FaUserPlus, FaCheck, FaSpinner } from "react-icons/fa6";
-import { IoMdNotificationsOutline } from "react-icons/io";
+import { TbWorld, TbMapPin } from "react-icons/tb";
+import { FaLinkedin, FaLink } from "react-icons/fa";
+import { FaUserPlus, FaCheck, FaSpinner, FaComment } from "react-icons/fa6";
 import DisplayProject from "./DisplayProject";
 import { DEFAULT_PROFILE_IMG } from "../constant";
 import { getUserProfileApi } from "../services/profileApi";
+import { sendConnectionRequestApi } from '../../connection/services/userConnectionApi'
+import { fetchAllConnectionData } from "../../connection/connectionActions";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import toast from 'react-hot-toast';
-import { sendConnectionRequest } from "../services/connectionApi";
 
 const UserProfile = () => {
-  const currUser = useSelector((state)=>state.user.currentUser);
+  const dispatch = useDispatch();
+  const currUser = useSelector((state) => state.user.currentUser);
+  const connections = useSelector((state) => state.connection.connections);
+  const pendingRequests = useSelector((state) => state.connection.pendingRequests);
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sendingRequest, setSendingRequest] = useState(false);
   const { userName } = useParams();
+
+  const isOwnProfile = !userName || currUser?.userName === userName;
+  const isConnected = connections.some(conn => conn._id === user?._id);
+  const isRequestSent = pendingRequests.some(req => req._id === user?._id);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -50,13 +58,62 @@ const UserProfile = () => {
 
   const handleSendConnectionRequest = async () => {
     try{
-      const sendRequest =  await sendConnectionRequest(user._id);
+      setSendingRequest(true);
+      await sendConnectionRequestApi("requested", user._id);
+      await dispatch(fetchAllConnectionData());
       toast.success("Connection request sent");
     }catch(err){
-      if(err?.response?.data?.errorCode === "CONNECTION_REQUEST_ALREADY_SENT") toast.success("Conection sent already");
-      else toast.error("Unable to send Request");
+      if(err?.response?.data?.errorCode === "CONNECTION_REQUEST_ALREADY_SENT") {
+        toast.success("Connection sent already");
+      } else {
+        toast.error("Unable to send Request");
+      }
+    }finally{
+      setSendingRequest(false);
+    }
+  };
+
+  const handleSendMessage = () => {
+    toast.success("Message feature coming soon!");
+  };
+
+  const renderActionButton = () => {
+    if (isOwnProfile) return null;
+    
+    if (isConnected) {
+      return (
+        <button 
+          className='px-8 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-md flex items-center gap-2'
+          onClick={handleSendMessage}
+        >
+          <FaComment />
+          Message
+        </button>
+      );
     }
     
+    if (isRequestSent) {
+      return (
+        <button 
+          className='px-8 py-3 bg-gray-400 text-white rounded-xl font-semibold flex items-center gap-2 cursor-not-allowed'
+          disabled={true}
+        >
+          <FaCheck />
+          Request Sent
+        </button>
+      );
+    }
+    
+    return (
+      <button 
+        className='px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-md flex items-center gap-2 disabled:opacity-50'
+        onClick={handleSendConnectionRequest}
+        disabled={sendingRequest}
+      >
+        {sendingRequest ? <FaSpinner className='animate-spin' /> : <FaUserPlus />}
+        Connect
+      </button>
+    );
   };
 
   if(loading){
@@ -121,14 +178,7 @@ const UserProfile = () => {
                 <p className='text-gray-500 mt-1 text-lg'>@{user?.userName}</p>
               </div>
               
-             {currUser && <button 
-                className='px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold transition-all duration-200 transform hover:scale-105 shadow-md flex items-center gap-2'
-                onClick={handleSendConnectionRequest}
-                disabled={sendingRequest}
-              >
-                {sendingRequest ? <FaSpinner className='animate-spin' /> : <FaUserPlus />}
-                Connect
-              </button>}
+              {currUser && renderActionButton()}
             </div>
 
             <div className='flex flex-wrap gap-3 mb-6'>

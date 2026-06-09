@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getCurUserProfile, logoutUserApi } from '../services/navbarApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser, removeUser } from '../../user/userSlice';
+import { fetchAllConnectionData } from '../../connection/connectionActions';
 import SearchSuggestion from './SearchSuggestion';
 import NavProfileCard from './NavProfileCard';
 import NotificationComponent from './NotificationsComponent';
@@ -35,6 +36,8 @@ const Navbar = () => {
                 if (data) {
                     setUser(data);
                     dispatch(addUser(data));
+                    // Fetch connection data after user is logged in
+                    await dispatch(fetchAllConnectionData());
                 }
             } catch (error) {
                 console.log("Not authenticated - showing public navbar");
@@ -44,7 +47,7 @@ const Navbar = () => {
             }
         }
         fetchUserData();
-    }, []); 
+    }, [dispatch]); 
 
     useEffect(() => {
         if (user) {
@@ -82,6 +85,17 @@ const Navbar = () => {
         } catch (error) {
             console.log("Logout failed:", error);
             toast.error("Logout failed");
+        }
+    }
+
+    const handleSearchKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            const searchQuery = e.target.value.trim()
+            if (searchQuery) {
+                navigate(`/search?q=${encodeURIComponent(searchQuery)}`)
+                setSearch("")
+                setShowSuggestion(false)
+            }
         }
     }
 
@@ -154,6 +168,7 @@ const Navbar = () => {
                                     placeholder="Search developers..."
                                     onChange={(e) => setSearch(e.target.value)}
                                     onFocus={() => setShowSuggestion(true)}
+                                    onKeyPress={handleSearchKeyPress}
                                     value={search}
                                 />
                             </div>

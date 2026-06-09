@@ -11,6 +11,7 @@ import PublicRoute from './PublicRoute'
 import ConnectionsPage from '../features/connection/page/ConnectionsPage'
 import ForgotPasswordPage from '../features/auth/pages/ForgotPasswordPage'
 import ResetPasswordPage from '../features/auth/pages/ResetPasswordPage'
+import SearchPage from '../features/search/pages/SearchPage'
 
 const AppRoutes = () => {
   return (
@@ -32,6 +33,7 @@ const AppRoutes = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="setup-profile" element={<SetUpProfile />} />
           <Route path="connections" element={<ConnectionsPage />} />
+           <Route path="search" element={<SearchPage />} />
         </Route>
         
       </Route>

@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { FaUserCheck, FaUserPlus, FaClock, FaComment, FaTrash, FaUserMinus } from "react-icons/fa6"
 import { MdMessage } from "react-icons/md"
 import { TbUserCircle } from "react-icons/tb"
 import toast from 'react-hot-toast'
-import { getConnection, getPendingRequest } from '../services/userConnectionApi'
 import { Link } from 'react-router-dom'
-import { handleConnectionRequestApi, removeConnectionApi } from '../../profile/services/connectionApi'
+import { sendConnectionRequestApi,handleConnectionRequestApi,removeConnectionApi } from '../../connection/services/userConnectionApi'
+import { fetchAllConnectionData } from '../connectionActions'
 
 const ConnectionComponent = () => {
+    const dispatch = useDispatch()
     const currUser = useSelector(state => state.user.currentUser)
+    const connections = useSelector(state => state.connection.connections)
+    const pendingRequests = useSelector(state => state.connection.pendingRequests)
+    
     const [activeTab, setActiveTab] = useState('pending')
-    const [pendingRequests, setPendingRequests] = useState([])
-    const [connections, setConnections] = useState([])
     const [loading, setLoading] = useState(true)
     const [actionLoading, setActionLoading] = useState(false)
 
     useEffect(() => {
-        fetchConnectionsData()
-        
-    }, [])
+        if (currUser) {
+            fetchConnectionsData()
+        }
+    }, [currUser])
 
     const fetchConnectionsData = async () => {
         try {
             setLoading(true)
-            const pendingRes = await getPendingRequest();
-            const connectionRes = await getConnection();
-            setPendingRequests(pendingRes)
-            setConnections(connectionRes)
+            await dispatch(fetchAllConnectionData())
         } catch (error) {
             console.log(error)
             toast.error("Failed to load connections")
@@ -36,41 +36,37 @@ const ConnectionComponent = () => {
         }
     }
 
-    const handleConnectionRequest = async (status,requestId) => {
+    const handleConnectionRequest = async (status, requestId) => {
         try {
             setActionLoading(true)
-            await handleConnectionRequestApi(status,requestId);
+            await handleConnectionRequestApi(status, requestId)
+            await dispatch(fetchAllConnectionData())
             toast.success(`Connection request ${status}`)
-            fetchConnectionsData()
         } catch (error) {
-            toast.error("Failed to accept request")
+            console.log(error)
+            toast.error(error.response?.data?.message || "Failed to process request")
         } finally {
             setActionLoading(false)
         }
     }
 
-
     const handleRemoveConnection = async (connectionId) => {
         try {
             setActionLoading(true)
-            await removeConnectionApi(connectionId);
+            await removeConnectionApi(connectionId)
+            await dispatch(fetchAllConnectionData())
             toast.success("Connection removed")
-            fetchConnectionsData()
         } catch (error) {
-            toast.error("Failed to remove connection")
+            console.log(error)
+            toast.error(error.response?.data?.message || "Failed to remove connection")
         } finally {
             setActionLoading(false)
         }
     }
 
     const handleSendMessage = (userId) => {
-        // You will implement message functionality
         console.log("Send message to:", userId)
-    }
-
-    const handleViewProfile = (userName) => {
-        // Navigate to profile
-        console.log("View profile:", userName)
+        toast.success("Message feature coming soon!")
     }
 
     if (loading) {
@@ -101,22 +97,6 @@ const ConnectionComponent = () => {
 
                         <div className='border-b border-gray-200'>
                             <div className='flex'>
-                                
-                                <button
-                                    className={`px-6 py-3 font-semibold transition-all duration-200 relative ${
-                                        activeTab === 'connections'
-                                            ? 'text-blue-600 border-b-2 border-blue-600'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                    }`}
-                                    onClick={() => setActiveTab('connections')}
-                                >
-                                    My Connections
-                                    {connections.length > 0 && (
-                                        <span className='ml-2 px-2 py-0.5 text-xs bg-gray-400 text-white rounded-full'>
-                                            {connections.length}
-                                        </span>
-                                    )}
-                                </button>
                                 <button
                                     className={`px-6 py-3 font-semibold transition-all duration-200 relative ${
                                         activeTab === 'pending'
@@ -129,6 +109,21 @@ const ConnectionComponent = () => {
                                     {pendingRequests.length > 0 && (
                                         <span className='ml-2 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full'>
                                             {pendingRequests.length}
+                                        </span>
+                                    )}
+                                </button>
+                                <button
+                                    className={`px-6 py-3 font-semibold transition-all duration-200 relative ${
+                                        activeTab === 'connections'
+                                            ? 'text-blue-600 border-b-2 border-blue-600'
+                                            : 'text-gray-500 hover:text-gray-700'
+                                    }`}
+                                    onClick={() => setActiveTab('connections')}
+                                >
+                                    My Connections
+                                    {connections.length > 0 && (
+                                        <span className='ml-2 px-2 py-0.5 text-xs bg-gray-400 text-white rounded-full'>
+                                            {connections.length}
                                         </span>
                                     )}
                                 </button>
@@ -153,30 +148,29 @@ const ConnectionComponent = () => {
                                                     <div className='flex flex-col md:flex-row gap-4'>
                                                         <div className='flex-shrink-0'>
                                                             <img
-                                                                src={request.fromUserId?.profileImage?.imageUrl}
+                                                                src={request.fromUserId?.profileImage?.imageUrl || "https://i.ibb.co/NnCS39LF/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission.jpg"}
                                                                 className='w-16 h-16 rounded-full object-cover'
-                                                                alt={request.firstName}
+                                                                alt={request.fromUserId?.firstName}
                                                             />
                                                         </div>
                                                         
                                                         <div className='flex-1'>
                                                             <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-3'>
-                                                                <Link to={`/u/${request.fromUserId.userName}`}>
+                                                                <Link to={`/u/${request.fromUserId?.userName}`}>
                                                                     <div>
                                                                         <h3 
                                                                             className='font-bold text-lg text-gray-800 hover:text-blue-600 cursor-pointer transition-colors'
-                                                                            onClick={() => handleViewProfile(request.userName)}
                                                                         >
-                                                                            {request.fromUserId.firstName} {request.fromUserId.lastName}
+                                                                            {request.fromUserId?.firstName} {request.fromUserId?.lastName}
                                                                         </h3>
-                                                                        <p className='text-sm text-gray-500'>@{request.fromUserId.userName}</p>
+                                                                        <p className='text-sm text-gray-500'>@{request.fromUserId?.userName}</p>
                                                                     </div>
                                                                 </Link>
                                                                 
                                                                 <div className='flex gap-2'>
                                                                     <button
                                                                         className='px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 disabled:opacity-50'
-                                                                        onClick={() => handleConnectionRequest('accepted',request._id)}
+                                                                        onClick={() => handleConnectionRequest('accepted', request._id)}
                                                                         disabled={actionLoading}
                                                                     >
                                                                         <FaUserCheck size={16} />
@@ -184,7 +178,7 @@ const ConnectionComponent = () => {
                                                                     </button>
                                                                     <button
                                                                         className='px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 disabled:opacity-50'
-                                                                        onClick={() => handleConnectionRequest('rejected',request._id)}
+                                                                        onClick={() => handleConnectionRequest('rejected', request._id)}
                                                                         disabled={actionLoading}
                                                                     >
                                                                         <FaUserMinus size={16} />
@@ -226,23 +220,19 @@ const ConnectionComponent = () => {
                                                         
                                                         <div className='flex-1'>
                                                             <div className='flex flex-col md:flex-row justify-between items-start md:items-center gap-3'>
-                                                                <div>
-                                                                    <h3 
-                                                                        className='font-bold text-lg text-gray-800 hover:text-blue-600 cursor-pointer transition-colors'
-                                                                        onClick={() => handleViewProfile(connection.userName)}
-                                                                    >
-                                                                        {connection.firstName} {connection.lastName}
-                                                                    </h3>
-                                                                    <p className='text-sm text-gray-500'>@{connection.userName}</p>
-                                                                    {connection.bio && (
-                                                                        <p className='text-sm text-gray-600 mt-1 line-clamp-2'>{connection.bio}</p>
-                                                                    )}
-                                                                    {connection.connectedSince && (
-                                                                        <p className='text-xs text-gray-400 mt-2'>
-                                                                            Connected since {new Date(connection.connectedSince).toLocaleDateString()}
-                                                                        </p>
-                                                                    )}
-                                                                </div>
+                                                                <Link to={`/u/${connection.userName}`}>
+                                                                    <div>
+                                                                        <h3 
+                                                                            className='font-bold text-lg text-gray-800 hover:text-blue-600 cursor-pointer transition-colors'
+                                                                        >
+                                                                            {connection.firstName} {connection.lastName}
+                                                                        </h3>
+                                                                        <p className='text-sm text-gray-500'>@{connection.userName}</p>
+                                                                        {connection.bio && (
+                                                                            <p className='text-sm text-gray-600 mt-1 line-clamp-2'>{connection.bio}</p>
+                                                                        )}
+                                                                    </div>
+                                                                </Link>
                                                                 
                                                                 <div className='flex gap-2'>
                                                                     <button
@@ -254,7 +244,7 @@ const ConnectionComponent = () => {
                                                                     </button>
                                                                     <button
                                                                         className='px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-all duration-200 flex items-center gap-2'
-                                                                        onClick={() => handleRemoveConnection(connection.connectionId)}
+                                                                        onClick={() => handleRemoveConnection(connection.connectionId || connection._id)}
                                                                     >
                                                                         <FaTrash size={14} />
                                                                         Remove

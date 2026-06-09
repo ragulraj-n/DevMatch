@@ -78,7 +78,7 @@ const searchUsers = asyncHandler(async (req, res) => {
       },
     ]);
 
-    res.status(200).json(new ApiResponse(200,"search data fetched successfully"),users);
+    res.status(200).json(new ApiResponse(200,"search data fetched successfully",users));
 })
 
 const searchUserSuggestion = asyncHandler(async (req, res) => {

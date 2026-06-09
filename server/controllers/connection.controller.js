@@ -109,13 +109,16 @@ const getConnections = asyncHandler(async (req,res) =>{
                 }
             ]
         })
+        .populate("_id")
         .populate("fromUserId","firstName lastName userName profileImage")
         .populate("toUserId","firstName lastName userName profileImage");
 
-        const filteredConnections = connections.map((data)=>{
-            if(data.fromUserId._id.equals(user._id)) return data.toUserId;
-            return data.fromUserId;
-        })
+        const filteredConnections = connections.map(connection => ({
+        connectionId: connection._id,
+        ...(connection.fromUserId._id.equals(user._id)
+            ? connection.toUserId.toObject()
+            : connection.fromUserId.toObject())
+    }));
 
         res.status(200).json(new ApiResponse(200,"connections fetched successfully",filteredConnections));
 

@@ -22,6 +22,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
+app.set("trust proxy", 1);
 const appRateLimiter = createRateLimiter({
     windowMs:60*1000,
     max:200,
@@ -34,6 +35,13 @@ app.use("/api/",connectionRouter);
 app.use("/api/feed",feedRouter); 
 app.use("/api/search",searchRouter);
 app.use("/api",AdditionalRouter)
+
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok"
+    });
+});
+
 app.use(errorHandler);
 
 

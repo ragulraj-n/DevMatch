@@ -37,7 +37,7 @@ const NavProfileCard = ({setShowNavProfile, userLogout}) => {
           </div>
         </Link>
         
-        <Link to='/settings'>
+        <Link to='/' className='pointer-events-none'>
           <div 
             className='flex items-center gap-3 px-5 py-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200 cursor-pointer group'
             onClick={() => setShowNavProfile()}

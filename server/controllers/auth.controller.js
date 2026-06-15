@@ -94,7 +94,7 @@ const forgotPassword = asyncHandler(async (req,res) =>{
 
         const token = jwt.sign({id: user._id },JWT_PRIVATE_KEY,{ expiresIn: "15m"});
 
-        const resetLink = `http://localhost:5173/reset-password/${token}`;
+        const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
         const htmpTemplate = (resetLink) =>{
             return `<!DOCTYPE html>
             <html>

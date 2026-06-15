@@ -39,7 +39,7 @@ const registerUser = asyncHandler(async (req,res) => {
 
     res.cookie("token",token,{
             httpOnly:true,
-            sameSite: "lax",
+            sameSite: "none",
             secure:false,
             path: "/",
             maxAge: 60 * 24 * 60 * 60 * 1000,
@@ -64,7 +64,7 @@ const loginUser = asyncHandler(async (req,res) =>{
 
         res.cookie("token",token,{
             httpOnly:true,
-            sameSite: "lax",
+            sameSite: "none",
             secure:false,
             path: "/",
             maxAge: 60 * 24 * 60 * 60 * 1000,

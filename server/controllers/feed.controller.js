@@ -1,7 +1,7 @@
 const Connection  = require("../models/Connection");
 const User = require("../models/User");
 const ApiResponse = require("../utils/ApiResponse");
-const asyncHandler = require("../utils/AsyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 
 const sendFeed = asyncHandler(async (req,res) =>{
         const page = Number(req.query.page) || 1;

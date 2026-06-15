@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
-const asyncHandler = require("../utils/AsyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 
 const searchUsers = asyncHandler(async (req, res) => {
     const q = req.query.q?.trim();

@@ -1,7 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const Connection = require("../models/Connection");
 const User = require("../models/User");
-const asyncHandler = require("../utils/AsyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError")
 const ApiResponse = require("../utils/ApiResponse");
 

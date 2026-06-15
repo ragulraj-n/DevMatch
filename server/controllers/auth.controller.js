@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {JWT_PRIVATE_KEY} = require("../config/constant");
 const { sendEmail } = require("../utils/emailService");
-const asyncHandler = require("../utils/AsyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 const ApiResponse = require("../utils/ApiResponse");
 const ApiError = require("../utils/ApiError");
 

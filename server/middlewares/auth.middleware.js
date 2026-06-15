@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { JWT_PRIVATE_KEY } = require("../config/constant");
 const User = require("../models/User");
-const asyncHandler = require("../utils/AsyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 const ApiResponse = require("../utils/ApiResponse");
 

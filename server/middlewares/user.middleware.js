@@ -1,5 +1,5 @@
 const {body } = require("express-validator");
-const asyncHandler = require("../utils/AsyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 
 const validateEditProfile = [

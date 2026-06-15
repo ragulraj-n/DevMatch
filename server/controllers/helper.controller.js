@@ -1,4 +1,4 @@
-const asyncHandler = require("../utils/AsyncHandler");
+const asyncHandler = require("../utils/asyncHandler");
 const ApiError = require("../utils/ApiError");
 const cloudinary = require("../utils/uploadImage");
 const ApiResponse = require("../utils/ApiResponse");

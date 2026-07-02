@@ -1,30 +1,17 @@
+const { Resend } = require("resend");
+const ApiError = require("./ApiError");
 
-const nodemailer = require("nodemailer");
-const {USER_EMAIL,USER_PASS} = require("../config/constant")
-const transporter = nodemailer.createTransport({
-    service:"gmail",
-    auth:{
-        user: USER_EMAIL,
-        pass: USER_PASS,
-    },
-    family: 4,
-});
+const resend = new Resend(process.env.RESEND_API);
 
-const sendEmail = async (to,subject,text,html) =>{
-    try{
-        const info = await transporter.sendMail({
-        from:`"DevMatch" <${USER_EMAIL}>`,
-        to,
-        subject,
-        text,
-        html,
+const sendEmail = async (toemail,subject,text,html) => {
+    const { data, error} = await resend.emails.send({
+    from: 'DevMatch <onboarding@resend.dev>',
+    to: toemail,
+    subject,
+    html,
+    text,
     });
-
-        return info;
-    }catch(err){
-        console.error("Email error:", err);
-        throw new Error("Email failed");
-    }
+    if(error) throw new ApiError(400,null,"Error in sending email",error);
 }
 
-module.exports = {sendEmail}; 
+module.exports = {sendEmail};

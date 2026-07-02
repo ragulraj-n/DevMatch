@@ -11,7 +11,7 @@ const errorHandler = require("./middlewares/errorHandler")
 const cors = require('cors');
 const { FRONTEND_URL } = require("./config/constant");
 const AdditionalRouter = require("./routes/helper.routes");
-
+const sendEmail = require("./utils/emailService");
 const app = express();
 app.use(cors({
     origin: FRONTEND_URL,
@@ -21,6 +21,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
+
 
 app.set("trust proxy", 1);
 const appRateLimiter = createRateLimiter({

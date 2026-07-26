@@ -3,12 +3,13 @@ const { searchUsers, searchUserSuggestion } = require("../controllers/search.con
 const searchRouter = express.Router();
 const {authUser} = require("../middlewares/auth.middleware");
 const createRateLimiter = require("../utils/createRateLimiter");
+const searchCache = require("../middlewares/searchCache.js");
 
 const searchRateLimiter = createRateLimiter({
     max:30,
 })
 
-searchRouter.get("/suggestion",authUser,searchUserSuggestion);
-searchRouter.get("/",authUser,searchRateLimiter,searchUsers);
+searchRouter.get("/suggestion",authUser,searchCache("suggestion"),searchUserSuggestion);
+searchRouter.get("/",authUser,searchRateLimiter,searchCache("search"),searchUsers);
 
 module.exports = searchRouter;
